@@ -19,6 +19,8 @@ import { ChatParticipantStatus } from '../../ng-chat/core/chat-participant-statu
 import { Localization, StatusDescription } from './../../ng-chat/core/localization';
 
 class MockableFileUploadAdapter implements IFileUploadAdapter {
+    downloadFile(message: Message): void {
+    }
     uploadFile(file: File, userTo: User): Observable<Message> {
         throw new Error("Method not implemented.");
     }
@@ -257,7 +259,7 @@ describe('NgChatWindowComponent', () => {
         expect(MockableFileUploadAdapter.prototype.uploadFile).toHaveBeenCalledTimes(1);
         expect(MockableFileUploadAdapter.prototype.uploadFile).toHaveBeenCalledWith(fakeFile, chatWindow.participant.id);
 
-		expect(messageSentSpy).toHaveBeenCalledTimes(1);
+        expect(messageSentSpy).toHaveBeenCalledTimes(1);
         expect(messageSentSpy.calls.mostRecent().args[0]).toBe(mockedFileMessageServerResponse);
 
         expect(mockedFileMessageServerResponse.fromId).toBe(subject.userId);

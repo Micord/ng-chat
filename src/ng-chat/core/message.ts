@@ -1,3 +1,4 @@
+import { Attachment } from "./attachment";
 import { MessageType } from './message-type.enum';
 
 export class Message
@@ -8,4 +9,5 @@ export class Message
     public message: string;
     public dateSent?: Date;
     public dateSeen?: Date;
+    public file?: Attachment;
 }

@@ -13,6 +13,8 @@ export class DefaultFileUploadAdapter implements IFileUploadAdapter
     constructor(private _serverEndpointUrl: string, private _http: HttpClient) {
     }
 
+    downloadFile(message: Message) {
+    }
     uploadFile(file: File, participantId: any): Observable<Message> {
         const formData: FormData = new FormData();
 

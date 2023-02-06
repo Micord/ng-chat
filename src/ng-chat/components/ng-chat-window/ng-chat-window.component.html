@@ -50,12 +50,19 @@
 					<span *ngIf="showMessageDate && message.dateSent" class="message-sent-date">{{message.dateSent | date:messageDatePipeFormat}}</span>
 				</div>
 				<div *ngSwitchCase="MessageType.File" [ngClass]="{'file-message-container': true, 'received': message.fromId != userId}">
-					<div class="file-message-icon-container">
+					<div *ngIf="message.file.previewSrc; then imagePreview else mimeType"></div>
+					<ng-template #imagePreview>
+						<img src="{{message.file.previewSrc}}" class="image-message"  alt="{{message.file.fileName}}" (click)="this.markMessagesAsRead([message])"/>
+					</ng-template>
+					<ng-template #mimeType>
+						<img src="{{message.file.previewSrc}}" class="image-message"  alt="{{message.file.mimeType}}" (click)="this.markMessagesAsRead([message])"/>
+					</ng-template>
+					<div class="file-message-icon-container" (click)="this.fileUploadAdapter.downloadFile(message)">
 						<i class="paperclip-icon"></i>
 					</div>
-					<a class="file-details" [attr.href]="message.downloadUrl" target="_blank" rel="noopener noreferrer" (click)="this.markMessagesAsRead([message])" download>
-						<span class="file-message-title" [attr.title]="message.message">{{message.message}}</span>
-						<span *ngIf="message.fileSizeInBytes"  class="file-message-size">{{message.fileSizeInBytes}} Bytes</span>
+					<a class="file-details" [attr.href]="message.file.downloadUrl" target="_blank" rel="noopener noreferrer" (click)="this.fileUploadAdapter.downloadFile(message)" download>
+						<span class="file-message-title" [attr.title]="message.file.fileName">{{message.file.fileName}}</span>
+						<span *ngIf="message.file.fileSizeInBytes"  class="file-message-size">{{message.file.fileSizeInBytes}} Bytes</span>
 					</a>
 				</div>
 			</ng-container>
