@@ -53,39 +53,39 @@
         cursor: pointer;
         max-height: 30px;
     }
-        #ng-chat-users li > .ng-chat-friends-list-selectable-offset
+        #ng-chat-users li > .ng-chat-participants-selectable-offset
         {
             margin-left: 22px;
         }
-        #ng-chat-users li .ng-chat-friends-list-container
+        #ng-chat-users li .ng-chat-participants-container
         {
             display: inline-block;
             width: 100%;
         }
-        #ng-chat-users li > .ng-chat-friends-list-selectable-offset.ng-chat-friends-list-container
+        #ng-chat-users li > .ng-chat-participants-selectable-offset.ng-chat-participants-container
         {
             display: block;
             width: auto;
         }
-        #ng-chat-users li .ng-chat-friends-list-container > img.avatar, #ng-chat-users li .ng-chat-friends-list-container > .icon-wrapper
+        #ng-chat-users li .ng-chat-participants-container > img.avatar, #ng-chat-users li .ng-chat-participants-container > .icon-wrapper
         {
             float: left;
             margin-right: 5px;
             border-radius: 25px;
         }
-        #ng-chat-users li .ng-chat-friends-list-container > .icon-wrapper
+        #ng-chat-users li .ng-chat-participants-container > .icon-wrapper
         {
             background-color: #BABABA;
             overflow: hidden;
             width: 30px;
             height: 30px;
         }
-            #ng-chat-users li .ng-chat-friends-list-container > .icon-wrapper > i
+            #ng-chat-users li .ng-chat-participants-container > .icon-wrapper > i
             {
                 color: #FFF;
                 transform: scale(0.7);
             }
-        #ng-chat-users li .ng-chat-friends-list-container > strong
+        #ng-chat-users li .ng-chat-participants-container > strong
         {
             float: left;
             line-height: 30px;
@@ -96,7 +96,7 @@
             white-space: nowrap;
             text-overflow: ellipsis;
         }
-        #ng-chat-users li .ng-chat-friends-list-container > .ng-chat-participant-status
+        #ng-chat-users li .ng-chat-participants-container > .ng-chat-participant-status
         {
             float: right;
         }
@@ -121,7 +121,7 @@
 }
 
 /* Mobile viewport only */
-@media only screen and (max-width: 581px) { 
+@media only screen and (max-width: 581px) {
     #ng-chat-people
     {
         width: 300px;

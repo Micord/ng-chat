@@ -1,11 +1,11 @@
-import { Window } from '../core/window';
-import { IChatParticipant } from '../core/chat-participant';
+import { IChatParticipant } from './chat-participant';
+import { ChatWindow } from './chat-window';
 
 export interface IChatOption
 {
     isActive: boolean;
     displayLabel: string;
-    chattingTo: Window;
-    action?: (chattingTo: Window) => void;
+    chattingTo: ChatWindow;
+    action?: (chattingTo: ChatWindow) => void;
     validateContext: (participant: IChatParticipant) => boolean;
 }

@@ -69,13 +69,14 @@ export class AppComponent {
 ```
 
 __Required Settings__
-* [adapter]{object}: This will point to your adapter implementation ('MyAdapter' in the example above).
+* [chatAdapter]{object}: This will point to your adapter implementation ('MyAdapter' in the example above).
 * [userId]{any}: The unique id of the user that will be using the chat instance.
 
 __Additional Settings__
 * [title]{string}: The title to be displayed on the friends list. Default is "Friends".
 * [isDisabled]{boolean}: Indicates if ng-chat should be hidden. This stops poll requests to the friends list. Default is false.
 * [isCollapsed]{boolean}: If set to true the friends list will be rendered as collapsed by default. Default is false.
+* [maximizeWindowOnNewMessage]{boolean}: If set to false new chat windows will render as collapsed when receiving new messages. Default is true.
 * [pollFriendsList]{boolean}: If set to true the module will do a long poll on the "adapter.listFriends" method to keep the friends list updated. Default is false.
 * [pollingInterval]{number}: Configures the long poll interval in milliseconds. Default is 5000.
 * [searchEnabled]{boolean}: Enables the search bar on the friends list. Default is true.
@@ -88,16 +89,12 @@ __Additional Settings__
 * [persistWindowsState]{boolean}: Saves the state of current open windows on the local storage. Default is true.
 * [browserNotificationsEnabled]{boolean}: Enables browser notifications on received messages. Default is true.
 * [browserNotificationIconSource]{string}: Source URL of the icon displayed on the browser notification. Default is a RAW github PNG content from ng-chat repository.
-* [maximizeWindowOnNewMessage]{boolean}: If set to false new chat windows will render as collapsed when receiving new messages. Default is true.
-* [hideFriendsList]{boolean}: Hides the friends list. Chat windows can still be opened, closed and toggled by using `IChatController`. Default is false.
-* [hideFriendsListOnUnsupportedViewport]{boolean}: Hides the friends list if there isn't enough space for at least one chat window on the current viewport. Default is true.
+* [showFriendsList]{boolean}: Shows the friends list. Chat windows can still be opened, closed and toggled by using `IChatController`. Default is true.
 * [fileUploadAdapter]{IFileUploadAdapter}: Your custom implementation of IFileUploadAdapter for file uploads.
-* [fileUploadUrl]{string}: Defines a valid CORS enabled URL that can process a request form file and return a `FileMessage` for the destinatary user.
 * [theme]{ng-chat/core/theme.enum:Theme}: Defines the styling theme. There is a light (default) and a dark theme available. You can also supply this as a string.
 * [customTheme]{string}: Source URL of the stylesheet asset to use for custom CSS styles. Works with assets relative to the project using ng-chat.
 * [showMessageDate]{boolean}: Shows the date in which a message was sent. Default is true.
 * [messageDatePipeFormat]{string}: The format for the pipe that is used when rendering the date in which a message was sent. Default is "short".
-* [groupAdapter]{IChatGroupAdapter}: A group adapter implementation to enable group chat.
 * [isViewportOnMobileEnabled]{boolean}: Allow ng-chat to render and be displayed on mobile devices. Default is false.
 
 __Localization__
@@ -144,27 +141,9 @@ If in doubt, here are 2 adapter example implementations:
 * [Offline Bot Adapter](https://github.com/rpaschoal/ng-chat-netcoreapp/blob/master/NgChatClient/ClientApp/src/app/demo-adapter.ts)
 * [SignalR Adapter](https://github.com/rpaschoal/ng-chat-netcoreapp/blob/master/NgChatClient/ClientApp/src/app/signalr-adapter.ts)
 
-#### Add support for group chat:
-
-An `IChatParticipant` can be a User or a Group but in order to enable group chat you must implement and supply to ng-chat an instance of `IChatGroupAdapter`. You will have to implement the following contract:
-
-```
-groupCreated(group: Group): void;
-```
-
-ng-chat generates a guid every time a new group is created and invokes the method above so you can handle it on your application to persist the newly generated Group (Id, Participants, etc).
-
-Once you have an implementation of `IChatGroupAdapter`, just supply it to your ng-chat instance:
-
-```
-<ng-chat [groupAdapter]="myGroupAdapterInstance" ... ></ng-chat>
-```
-
 #### File Upload:
 
 ng-chat supports attachment of any type of files. To do so you need to implement an API endpoint on your application that can receive a POST with a form file.
-
-On your ng-chat instance make sure you provide a valid URI for the `fileUploadUrl` parameter. This will enable the default file upload adapter and each chat window will render at the bottom right an attachment action which will trigger an input of type=file.
 
 Along with a request form file ng-chat will also send a field named as `ng-chat-destinatary-userid` containing the id of the user in which the file will be sent to. Make sure you use this value to compose a response message as your API endpoint will have to return a `FileMessage`. This `FileMessage` instance will be sent to the destinatary user automatically by ng-chat as soon as the file upload ends successfully.
 
@@ -192,7 +171,7 @@ protected ngChatInstance: IChatController;
 You can now trigger some ng-chat actions such as opening a chat window from elsewhere using the following code:
 
 ```
-this.ngChatInstance.triggerOpenChatWindow(user);
+this.ngChatInstance.triggerToggleChatWindowVisibility();
 ```
 
 #### Paged History Chat Adapter:

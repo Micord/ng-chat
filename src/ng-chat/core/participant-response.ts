@@ -1,6 +1,5 @@
-import { User } from "./user";
-import { ParticipantMetadata } from "./participant-metadata";
 import { IChatParticipant } from "./chat-participant";
+import { ParticipantMetadata } from "./participant-metadata";
 
 export class ParticipantResponse
 {

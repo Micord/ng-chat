@@ -1,31 +1,32 @@
 <link *ngIf="customTheme" rel="stylesheet" [href]='customTheme | sanitize'>
 
-<div id="ng-chat" *ngIf="!isDisabled && isBootstrapped && !unsupportedViewport" [ngClass]="theme">
-    <ng-chat-friends-list
+<div id="ng-chat" *ngIf="!isDisabled && isBootstrapped && showParticipantsList" [ngClass]="theme">
+    <ng-chat-participants
         [localization]="localization"
-        [shouldDisplay]="!hideFriendsList"
         [userId]="userId"
         [isCollapsed]="isCollapsed"
         [searchEnabled]="searchEnabled"
         [participants]="participants"
         [participantsResponse]="participantsResponse"
         [participantsInteractedWith]="participantsInteractedWith"
-        [windows]="windows"
+        [window]="chatWindow"
         [currentActiveOption]="currentActiveOption"
         (onParticipantClicked)="onParticipantClickedFromFriendsList($event)"
         (onOptionPromptCanceled)="onOptionPromptCanceled()"
         (onOptionPromptConfirmed)="onOptionPromptConfirmed($event)"
     >
-    </ng-chat-friends-list>
+    </ng-chat-participants>
 
-    <div *ngFor="let window of windows; let i = index" [ngClass]="{'ng-chat-window': true, 'primary-outline-color': true, 'ng-chat-window-collapsed': window.isCollapsed}" [ngStyle]="{'right': (!hideFriendsList ? friendsListWidth : 0) + 20 + windowSizeFactor * i + 'px'}">
+    <div *ngIf="!!chatWindow"
+         [ngClass]="{'ng-chat-window': true, 'primary-outline-color': true,
+         'ng-chat-window-collapsed': chatWindow.isCollapsed}"
+         [ngStyle]="{'right': (showParticipantsList ? friendsListWidth : 0) + 20 + windowSizeFactor * 0 + 'px'}">
         <ng-chat-window
-            #chatWindow
+            #ngChatWindow
             [fileUploadAdapter]="fileUploadAdapter"
             [localization]="localization"
             [userId]="userId"
-            [window]="window"
-            [showOptions]="!!groupAdapter"
+            [chatWindow]="chatWindow"
             [emojisEnabled]="emojisEnabled"
             [linkfyEnabled]="linkfyEnabled"
             [showMessageDate]="showMessageDate"
@@ -33,8 +34,6 @@
             [hasPagedHistory]="hasPagedHistory"
             (onMessagesSeen)="onWindowMessagesSeen($event)"
             (onMessageSent)="onWindowMessageSent($event)"
-            (onTabTriggered)="onWindowTabTriggered($event)"
-            (onChatWindowClosed)="onWindowChatClosed($event)"
             (onOptionTriggered)="onWindowOptionTriggered($event)"
             (onLoadHistoryTriggered)="fetchMessageHistory($event)"
         >
