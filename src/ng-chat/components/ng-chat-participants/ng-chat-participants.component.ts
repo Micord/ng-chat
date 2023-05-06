@@ -55,7 +55,7 @@ export class NgChatParticipantsComponent implements OnChanges {
     @Output()
     public onOptionPromptConfirmed: EventEmitter<any> = new EventEmitter();
 
-    public selectedUsersFromFriendsList: ChatUser[] = [];
+    public selectedUsersFromParticipantsList: ChatUser[] = [];
 
     public searchInput: string = '';
 
@@ -66,10 +66,10 @@ export class NgChatParticipantsComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         if (this.currentActiveOption) {
             const currentOptionTriggeredBy = this.currentActiveOption && this.currentActiveOption.chattingTo.participant.id;
-            const isActivatedUserInSelectedList = (this.selectedUsersFromFriendsList.filter(item => item.id == currentOptionTriggeredBy)).length > 0;
+            const isActivatedUserInSelectedList = (this.selectedUsersFromParticipantsList.filter(item => item.id == currentOptionTriggeredBy)).length > 0;
 
             if (!isActivatedUserInSelectedList) {
-                this.selectedUsersFromFriendsList = this.selectedUsersFromFriendsList
+                this.selectedUsersFromParticipantsList = this.selectedUsersFromParticipantsList
                   .concat(this.currentActiveOption.chattingTo.participant as ChatUser);
             }
         }
@@ -85,9 +85,9 @@ export class NgChatParticipantsComponent implements OnChanges {
         return this.participants;
     }
 
-    isUserSelectedFromFriendsList(user: ChatUser) : boolean
+    isUserSelectedFromParticipantsList(user: ChatUser) : boolean
     {
-        return (this.selectedUsersFromFriendsList.filter(item => item.id == user.id)).length > 0
+        return (this.selectedUsersFromParticipantsList.filter(item => item.id == user.id)).length > 0
     }
 
     unreadMessagesTotalByParticipant(participant: IChatParticipant): string
@@ -109,22 +109,22 @@ export class NgChatParticipantsComponent implements OnChanges {
         }
     }
 
-    cleanUpUserSelection = () => this.selectedUsersFromFriendsList = [];
+    cleanUpUserSelection = () => this.selectedUsersFromParticipantsList = [];
 
-    // Toggle friends list visibility
+    // Toggle participants list visibility
     onChatTitleClicked(): void
     {
         this.isCollapsed = !this.isCollapsed;
     }
 
-    onFriendsListCheckboxChange(selectedUser: ChatUser, isChecked: boolean): void
+    onParticipantsListCheckboxChange(selectedUser: ChatUser, isChecked: boolean): void
     {
         if(isChecked) {
-            this.selectedUsersFromFriendsList.push(selectedUser);
+            this.selectedUsersFromParticipantsList.push(selectedUser);
         }
         else
         {
-            this.selectedUsersFromFriendsList.splice(this.selectedUsersFromFriendsList.indexOf(selectedUser), 1);
+            this.selectedUsersFromParticipantsList.splice(this.selectedUsersFromParticipantsList.indexOf(selectedUser), 1);
         }
     }
 
@@ -133,15 +133,15 @@ export class NgChatParticipantsComponent implements OnChanges {
         this.onParticipantClicked.emit(clickedUser);
     }
 
-    onFriendsListActionCancelClicked(): void
+    onParticipantsListActionCancelClicked(): void
     {
         this.onOptionPromptCanceled.emit();
         this.cleanUpUserSelection();
     }
 
-    onFriendsListActionConfirmClicked() : void
+    onParticipantsListActionConfirmClicked() : void
     {
-        this.onOptionPromptConfirmed.emit(this.selectedUsersFromFriendsList);
+        this.onOptionPromptConfirmed.emit(this.selectedUsersFromParticipantsList);
         this.cleanUpUserSelection();
     }
 }

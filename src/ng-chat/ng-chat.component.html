@@ -11,7 +11,7 @@
         [participantsInteractedWith]="participantsInteractedWith"
         [window]="chatWindow"
         [currentActiveOption]="currentActiveOption"
-        (onParticipantClicked)="onParticipantClickedFromFriendsList($event)"
+        (onParticipantClicked)="onParticipantClickedFromParticipantsList($event)"
         (onOptionPromptCanceled)="onOptionPromptCanceled()"
         (onOptionPromptConfirmed)="onOptionPromptConfirmed($event)"
     >
@@ -20,7 +20,7 @@
     <div *ngIf="!!chatWindow"
          [ngClass]="{'ng-chat-window': true, 'primary-outline-color': true,
          'ng-chat-window-collapsed': chatWindow.isCollapsed}"
-         [ngStyle]="{'right': (showParticipantsList ? friendsListWidth : 0) + 20 + windowSizeFactor * 0 + 'px'}">
+         [ngStyle]="{'right': (showParticipantsList ? participantsListWidth : 0) + 20 + windowSizeFactor * 0 + 'px'}">
         <ng-chat-window
             #ngChatWindow
             [fileUploadAdapter]="fileUploadAdapter"

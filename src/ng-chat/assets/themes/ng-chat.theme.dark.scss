@@ -27,7 +27,7 @@ $text-color: #FFF;
     {
         @extend %text-definition;
     }
-    .friends-search-bar
+    .participants-search-bar
     {
         background-color: $secondary-color;
         border: 1px solid $secondary-color;
@@ -61,7 +61,7 @@ $text-color: #FFF;
     {
         background-color: $secondary-color;
     }
-    .ng-chat-message a 
+    .ng-chat-message a
     {
         color: $text-color;
     }

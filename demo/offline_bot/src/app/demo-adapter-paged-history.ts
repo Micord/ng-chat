@@ -21,7 +21,7 @@ export class DemoAdapterPagedHistory extends PagedHistoryChatAdapter
         }
     }
 
-    listFriends(): Observable<ParticipantResponse[]> {
+    listParticipants(): Observable<ParticipantResponse[]> {
         return of(DemoAdapter.mockedParticipants.map(user => {
             let participantResponse = new ParticipantResponse();
 

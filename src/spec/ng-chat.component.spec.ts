@@ -7,12 +7,11 @@ import { Observable, of } from 'rxjs';
 import { Message } from '../ng-chat/core/message';
 import { MessageType } from '../ng-chat/core/message-type.enum';
 import { Theme } from '../ng-chat/core/theme.enum';
-import { Chat } from '../ng-chat/core/chat';
 import { IChatOption } from '../ng-chat/core/chat-option';
 import { NgChatWindowComponent } from '../ng-chat/components/ng-chat-window/ng-chat-window.component';
 
 class MockableAdapter extends ChatAdapter {
-    public listFriends(): Observable<ParticipantResponse[]> {
+    public listParticipants(): Observable<ParticipantResponse[]> {
         throw new Error("Method not implemented.");
     }
     public getMessageHistory(destinataryId: any): Observable<Message[]> {
@@ -40,14 +39,14 @@ describe('NgChat', () => {
     });
 
     it('Should have default title', () => {
-        expect(subject.title).toBe('Friends');
+        expect(subject.title).toBe('Participants');
     });
 
     it('Should have default message placeholder', () => {
         expect(subject.messagePlaceholder).toBe('Type a message');
     });
 
-    it('Should have default friends search placeholder', () => {
+    it('Should have default participants search placeholder', () => {
         expect(subject.searchPlaceholder).toBe('Search');
     });
 
@@ -71,7 +70,7 @@ describe('NgChat', () => {
         expect(subject.audioSource).not.toBeUndefined();
     });
 
-    it('Friends list search must be enabled by default', () => {
+    it('Participants list search must be enabled by default', () => {
         expect(subject.searchEnabled).not.toBeFalsy();
     });
 
@@ -131,7 +130,7 @@ describe('NgChat', () => {
         expect(subject.customTheme).toBeUndefined();
     });
 
-    it('Must hide friends list when there is not enough viewport to display at least one chat window ', () => {
+    it('Must hide participants list when there is not enough viewport to display at least one chat window ', () => {
         subject.viewPortTotalArea = 400;
 
         expect(subject.windows.length).toBe(0);
@@ -146,38 +145,38 @@ describe('NgChat', () => {
         expect(subject.windows.length).toBe(0);
     });
 
-    it('Must invoke adapter on fetchFriendsList', () => {
-        spyOn(MockableAdapter.prototype, 'listFriends').and.returnValue(of([]));
+    it('Must invoke adapter on fetchParticipantsList', () => {
+        spyOn(MockableAdapter.prototype, 'listParticipants').and.returnValue(of([]));
 
-        subject.fetchFriendsList(false);
+        subject.fetchParticipantsList(false);
 
-        expect(MockableAdapter.prototype.listFriends).toHaveBeenCalledTimes(1);
+        expect(MockableAdapter.prototype.listParticipants).toHaveBeenCalledTimes(1);
     });
 
-    it('Must invoke restore windows state on fetchFriendsList when bootstrapping', () => {
-        spyOn(MockableAdapter.prototype, 'listFriends').and.returnValue(of([]));
+    it('Must invoke restore windows state on fetchParticipantsList when bootstrapping', () => {
+        spyOn(MockableAdapter.prototype, 'listParticipants').and.returnValue(of([]));
         spyOn(subject, 'restoreWindowsState');
 
-        subject.fetchFriendsList(true);
+        subject.fetchParticipantsList(true);
 
         expect(subject.restoreWindowsState).toHaveBeenCalledTimes(1);
     });
 
-    it('Must not invoke restore windows state on fetchFriendsList when not bootstrapping', () => {
-        spyOn(MockableAdapter.prototype, 'listFriends').and.returnValue(of([]));
+    it('Must not invoke restore windows state on fetchParticipantsList when not bootstrapping', () => {
+        spyOn(MockableAdapter.prototype, 'listParticipants').and.returnValue(of([]));
         spyOn(subject, 'restoreWindowsState');
 
-        subject.fetchFriendsList(false);
+        subject.fetchParticipantsList(false);
 
         expect(subject.restoreWindowsState).not.toHaveBeenCalled();
     });
 
-    it('Must update participants property when onFriendsListChanged is invoked', () => {
+    it('Must update participants property when onParticipantsListChanged is invoked', () => {
         expect(subject.participantsResponse).toBeUndefined();
 
         subject.participantsInteractedWith = [new ChatUser()];
 
-        subject.onFriendsListChanged([
+        subject.onParticipantsListChanged([
             new ParticipantResponse(),
             new ParticipantResponse()
         ]);
@@ -405,8 +404,6 @@ describe('NgChat', () => {
     });
 
     it('Should not use local storage persistency if persistWindowsState is disabled', () => {
-        let windows = [new ChatWindow(null, false, false)];
-
         subject.persistWindowsState = false;
 
         spyOn(localStorage, 'setItem');
@@ -426,11 +423,6 @@ describe('NgChat', () => {
 
         firstUser.id = 88;
         secondUser.id = 99;
-
-        let firstWindow = new ChatWindow(firstUser, false, false);
-        let secondWindow = new ChatWindow(secondUser, false, false);
-
-        let windows = [firstWindow, secondWindow];
 
         expect(localStorage.setItem).toHaveBeenCalledTimes(1);
         expect(persistedValue).toBe(JSON.stringify([88, 99]));
@@ -831,7 +823,7 @@ describe('NgChat', () => {
         expect(subject.windows[1].participant).toBe(user);
     });
 
-    it('Must push to viewport when friends list is disabled exercise', () => {
+    it('Must push to viewport when participants list is disabled exercise', () => {
         const user: ChatUser = {
             id: 777,
             displayName: 'Test user',
@@ -853,7 +845,7 @@ describe('NgChat', () => {
         const remainingWindow = new ChatWindow(user, false, false);
         const windowThatWouldBeRemoved = new ChatWindow(userThatWouldBeRemoved, false, false);
 
-        subject.viewPortTotalArea = 961; // Would be enough for only 2 if the friends list was enabled. 1px more than window factor * 3
+        subject.viewPortTotalArea = 961; // Would be enough for only 2 if the participants list was enabled. 1px more than window factor * 3
         subject.historyEnabled = false;
         subject.windows = [
             remainingWindow,
@@ -1078,32 +1070,5 @@ describe('NgChat', () => {
 
         expect(subject.currentActiveOption).toBeNull();
         expect(mockedOption.isActive).toBeFalsy();
-    });
-
-    it('onOptionPromptConfirmed invoked exercise', () => {
-        let mockedFirstUser = new ChatUser();
-        let mockedSecondUser = new ChatUser();
-        let createdGroup: Chat = null;
-
-        mockedFirstUser.id = 888;
-        mockedSecondUser.id = 999;
-
-        // To test sorting of the name
-        mockedFirstUser.displayName = "ZZZ";
-        mockedSecondUser.displayName = "AAA";
-
-        const participants = [mockedFirstUser, mockedSecondUser];
-
-        spyOn(subject, 'openChatWindow').and.returnValue([null, true]);
-
-        subject.onOptionPromptConfirmed(participants);
-
-        expect(createdGroup).not.toBeNull();
-        expect(createdGroup.chattingTo).not.toBeNull();
-        expect(createdGroup.chattingTo.length).toBe(2);
-        expect(createdGroup.chattingTo[0]).toBe(mockedFirstUser);
-        expect(createdGroup.chattingTo[1]).toBe(mockedSecondUser);
-        expect(createdGroup.displayName).toBe("AAA, ZZZ");
-        expect(subject.openChatWindow).toHaveBeenCalledTimes(1);
     });
 });

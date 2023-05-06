@@ -75,7 +75,7 @@ export class NgChat implements OnInit, IChatController {
     public maximizeWindowOnNewMessage: boolean = true;
 
     @Input()
-    public pollFriendsList: boolean = false;
+    public pollParticipantsList: boolean = false;
 
     @Input()
     public pollingInterval: number = 60000;
@@ -102,7 +102,7 @@ export class NgChat implements OnInit, IChatController {
     public persistWindowsState: boolean = true;
 
     @Input()
-    public title: string = "Friends";
+    public title: string = "Participants";
 
     @Input()
     public messagePlaceholder: string = "Type a message";
@@ -190,8 +190,8 @@ export class NgChat implements OnInit, IChatController {
     // Defines the size of each opened window to calculate how many windows can be opened on the viewport at the same time.
     public windowSizeFactor: number = 320;
 
-    // Total width size of the friends list section
-    public friendsListWidth: number = 262;
+    // Total width size of the participants list section
+    public participantsListWidth: number = 262;
 
     // Available area to render the plugin
     private viewPortTotalArea: number;
@@ -226,8 +226,10 @@ export class NgChat implements OnInit, IChatController {
                 this.initializeBrowserNotifications();
 
                 // Binding event listeners
-                this.chatAdapter.messageReceivedHandler = (participant, msg) => this.onMessageReceived(participant, msg);
-                this.chatAdapter.friendsListChangedHandler = (participantsResponse) => this.onFriendsListChanged(participantsResponse);
+                this.chatAdapter.messageReceivedHandler =
+                  (participant, msg) => this.onMessageReceived(participant, msg);
+                this.chatAdapter.participantsListChangedHandler =
+                  (participantsResponse) => this.onParticipantsListChanged(participantsResponse);
 
                 this.activateFriendListFetch();
 
@@ -264,17 +266,17 @@ export class NgChat implements OnInit, IChatController {
         if (this.chatAdapter)
         {
             // Loading current users list
-            if (this.pollFriendsList){
-                // Setting a long poll interval to update the friends list
-                this.fetchFriendsList(true);
+            if (this.pollParticipantsList){
+                // Setting a long poll interval to update the participants list
+                this.fetchParticipantsList(true);
                 this.pollingIntervalWindowInstance = window
                   .setInterval(() =>
-                                 this.fetchFriendsList(false), this.pollingInterval);
+                                 this.fetchParticipantsList(false), this.pollingInterval);
             }
             else
             {
-                // Since polling was disabled, a friends list update mechanism will have to be implemented in the ChatAdapter.
-                this.fetchFriendsList(true);
+                // Since polling was disabled, a participants list update mechanism will have to be implemented in the ChatAdapter.
+                this.fetchParticipantsList(true);
             }
         }
     }
@@ -320,10 +322,10 @@ export class NgChat implements OnInit, IChatController {
         }
     }
 
-    // Sends a request to load the friends list
-    private fetchFriendsList(isBootstrapping: boolean): void
+    // Sends a request to load the participants list
+    private fetchParticipantsList(isBootstrapping: boolean): void
     {
-        this.chatAdapter.listFriends()
+        this.chatAdapter.listParticipants()
         .pipe(
             map((participantsResponse: ParticipantResponse[]) => {
                 this.participantsResponse = participantsResponse;
@@ -391,8 +393,8 @@ export class NgChat implements OnInit, IChatController {
         }
     }
 
-    // Updates the friends list via the event handler
-    private onFriendsListChanged(participantsResponse: ParticipantResponse[]): void
+    // Updates the participants list via the event handler
+    private onParticipantsListChanged(participantsResponse: ParticipantResponse[]): void
     {
         if (participantsResponse)
         {
@@ -438,7 +440,7 @@ export class NgChat implements OnInit, IChatController {
         }
     }
 
-    onParticipantClickedFromFriendsList(participant: IChatParticipant): void {
+    onParticipantClickedFromParticipantsList(participant: IChatParticipant): void {
         this.openChatWindow(participant, true, true);
     }
 

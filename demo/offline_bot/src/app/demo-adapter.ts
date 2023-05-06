@@ -57,7 +57,7 @@ export class DemoAdapter extends ChatAdapter
         status: ChatParticipantStatus.Away
     }];
 
-    listFriends(): Observable<ParticipantResponse[]> {
+    listParticipants(): Observable<ParticipantResponse[]> {
         return of(DemoAdapter.mockedParticipants.map(user => {
             const participantResponse = new ParticipantResponse();
 

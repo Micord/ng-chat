@@ -5,15 +5,15 @@
 			{{localization.title}}
 		</span>
 	</a>
-	<div *ngIf="currentActiveOption" class="ng-chat-people-actions" (click)="onFriendsListActionCancelClicked()">
+	<div *ngIf="currentActiveOption" class="ng-chat-people-actions" (click)="onParticipantsListActionCancelClicked()">
 		<a href="javascript:void(0);" class="ng-chat-people-action">
 			<i class="remove-icon"></i>
 		</a>
-		<a href="javascript:void(0);" class="ng-chat-people-action" (click)="onFriendsListActionConfirmClicked()">
+		<a href="javascript:void(0);" class="ng-chat-people-action" (click)="onParticipantsListActionConfirmClicked()">
 			<i class="check-icon"></i>
 		</a>
 	</div>
-	<input *ngIf="searchEnabled" id="ng-chat-search_friend" class="friends-search-bar" type="search"
+	<input *ngIf="searchEnabled" id="ng-chat-search_friend" class="participants-search-bar" type="search"
          [placeholder]="localization.searchPlaceholder" [(ngModel)]="searchInput" />
 	<ul id="ng-chat-users" *ngIf="!isCollapsed" [ngClass]="{'offset-search': searchEnabled}">
 		<li *ngFor="let user of filteredParticipants">
@@ -21,8 +21,8 @@
 				*ngIf="currentActiveOption && currentActiveOption.validateContext(user)"
 				type="checkbox"
 				class="ng-chat-users-checkbox"
-				(change)="onFriendsListCheckboxChange(user, $event.target.checked)"
-				[checked]="isUserSelectedFromFriendsList(user)"/>
+				(change)="onParticipantsListCheckboxChange(user, $event.target.checked)"
+				[checked]="isUserSelectedFromParticipantsList(user)"/>
 			<div [ngClass]="{'ng-chat-participants-selectable-offset': currentActiveOption,
 			'ng-chat-participants-container': true}" (click)="onUserClick(user)">
 				<div class="icon-wrapper">

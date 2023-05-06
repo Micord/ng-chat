@@ -73,13 +73,13 @@ __Required Settings__
 * [userId]{any}: The unique id of the user that will be using the chat instance.
 
 __Additional Settings__
-* [title]{string}: The title to be displayed on the friends list. Default is "Friends".
-* [isDisabled]{boolean}: Indicates if ng-chat should be hidden. This stops poll requests to the friends list. Default is false.
-* [isCollapsed]{boolean}: If set to true the friends list will be rendered as collapsed by default. Default is false.
+* [title]{string}: The title to be displayed on the participants list. Default is "Participants".
+* [isDisabled]{boolean}: Indicates if ng-chat should be hidden. This stops poll requests to the participants list. Default is false.
+* [isCollapsed]{boolean}: If set to true the participants list will be rendered as collapsed by default. Default is false.
 * [maximizeWindowOnNewMessage]{boolean}: If set to false new chat windows will render as collapsed when receiving new messages. Default is true.
-* [pollFriendsList]{boolean}: If set to true the module will do a long poll on the "adapter.listFriends" method to keep the friends list updated. Default is false.
+* [pollParticipantsList]{boolean}: If set to true the module will do a long poll on the "adapter.listParticipants" method to keep the participants list updated. Default is false.
 * [pollingInterval]{number}: Configures the long poll interval in milliseconds. Default is 5000.
-* [searchEnabled]{boolean}: Enables the search bar on the friends list. Default is true.
+* [searchEnabled]{boolean}: Enables the search bar on the participants list. Default is true.
 * [historyEnabled]{boolean}: Defines whether the component should call the "getMessageHistory" from the chat-adapter. Default is true.
 * [historyPageSize]{number}: Set the page size for each request if you are using the paged history chat adapter (Beta). Default is 10.
 * [emojisEnabled]{boolean}: Enables emoji parsing on the messages. Default is true.
@@ -89,7 +89,7 @@ __Additional Settings__
 * [persistWindowsState]{boolean}: Saves the state of current open windows on the local storage. Default is true.
 * [browserNotificationsEnabled]{boolean}: Enables browser notifications on received messages. Default is true.
 * [browserNotificationIconSource]{string}: Source URL of the icon displayed on the browser notification. Default is a RAW github PNG content from ng-chat repository.
-* [showFriendsList]{boolean}: Shows the friends list. Chat windows can still be opened, closed and toggled by using `IChatController`. Default is true.
+* [showParticipantsList]{boolean}: Shows the participants list. Chat windows can still be opened, closed and toggled by using `IChatController`. Default is true.
 * [fileUploadAdapter]{IFileUploadAdapter}: Your custom implementation of IFileUploadAdapter for file uploads.
 * [theme]{ng-chat/core/theme.enum:Theme}: Defines the styling theme. There is a light (default) and a dark theme available. You can also supply this as a string.
 * [customTheme]{string}: Source URL of the stylesheet asset to use for custom CSS styles. Works with assets relative to the project using ng-chat.
@@ -99,12 +99,12 @@ __Additional Settings__
 
 __Localization__
 * [messagePlaceholder]{string}: The placeholder that is displayed in the text input on each chat window. Default is "Type a message".
-* [searchPlaceholder]{string}: The placeholder that is displayed in the search input on the friends list. Default is "Search".
+* [searchPlaceholder]{string}: The placeholder that is displayed in the search input on the participants list. Default is "Search".
 * [localization]{Localization}: Contract defining all text that is rendered by this component. Supply your own object for full text localization/customization. Supplying this setting will override all  other localization settings.
 
 __Events__
 * (onParticipantClicked){IChatParticipant}: Event emitted every time a user/group is clicked on the chat window and a new chat window is opened.
-* (onParticipantChatOpened){IChatParticipant}: Event emitted every time a chat window is opened, regardless if it was due to a user/group click on the friends list or via new message received.
+* (onParticipantChatOpened){IChatParticipant}: Event emitted every time a chat window is opened, regardless if it was due to a user/group click on the participants list or via new message received.
 * (onParticipantChatClosed){IChatParticipant}: Event emitted every time a chat window is closed.
 * (onMessagesSeen){Message[]}: Event emitted every time a chunk of unread messages are seen by a user.
 
@@ -121,7 +121,7 @@ import { ChatAdapter } from 'ng-chat';
 After importing it to your custom adapter implementation (EG: MyAdapter.ts), you must implement at least 3 methods which are abstract in the ChatAdapter base class which are:
 
 ```
-public abstract listFriends(): Observable<ParticipantResponse[]>;
+public abstract listParticipants(): Observable<ParticipantResponse[]>;
     
 public abstract getMessageHistory(destinataryId: any): Observable<Message[]>;
 
@@ -131,10 +131,10 @@ These methods will be performed via the client integration. Apart from the clien
 
 ```
 public onMessageReceived(participant: IChatParticipant, message: Message): void
-public onFriendsListChanged(participantsResponse: ParticipantResponse[]): void
+public onParticipantsListChanged(participantsResponse: ParticipantResponse[]): void
 ```
 
-__Please note there is no need to override the 2 methods above. You must call them within your adapter implementation just to notify the module that a message was received or that the friends list was updated. The second one could be ignored if you decide to use the "pollFriendsList" feature.__
+__Please note there is no need to override the 2 methods above. You must call them within your adapter implementation just to notify the module that a message was received or that the participants list was updated. The second one could be ignored if you decide to use the "pollParticipantsList" feature.__
 
 If in doubt, here are 2 adapter example implementations:
 

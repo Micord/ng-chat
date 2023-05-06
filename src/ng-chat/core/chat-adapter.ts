@@ -7,7 +7,7 @@ export abstract class ChatAdapter
 {
     // ### Abstract adapter methods ###
 
-    public abstract listFriends(): Observable<ParticipantResponse[]>;
+    public abstract listParticipants(): Observable<ParticipantResponse[]>;
 
     public abstract getMessageHistory(destinataryId: any): Observable<Message[]>;
 
@@ -15,9 +15,9 @@ export abstract class ChatAdapter
 
     // ### Adapter/Chat income/ingress events ###
 
-    public onFriendsListChanged(participantsResponse: ParticipantResponse[]): void
+    public onParticipantsListChanged(participantsResponse: ParticipantResponse[]): void
     {
-        this.friendsListChangedHandler(participantsResponse);
+        this.participantsListChangedHandler(participantsResponse);
     }
 
     public onMessageReceived(participant: IChatParticipant, message: Message): void
@@ -27,7 +27,7 @@ export abstract class ChatAdapter
 
     // Event handlers
     /** @internal */
-    friendsListChangedHandler: (participantsResponse: ParticipantResponse[]) => void  = (participantsResponse: ParticipantResponse[]) => {};
+    participantsListChangedHandler: (participantsResponse: ParticipantResponse[]) => void  = (participantsResponse: ParticipantResponse[]) => {};
     /** @internal */
     messageReceivedHandler: (participant: IChatParticipant, message: Message) => void = (participant: IChatParticipant, message: Message) => {};
 }

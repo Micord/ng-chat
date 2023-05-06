@@ -28,17 +28,17 @@ describe('NgChatOptionsComponent', () => {
 		fixture.detectChanges();
 	});
 
-	it('isUserSelectedFromFriendsList exercise', () => {
+	it('isUserSelectedFromParticipantsList exercise', () => {
         let mockedFirstUser = new ChatUser();
         let mockedSecondUser = new ChatUser();
 
         mockedFirstUser.id = 888;
         mockedSecondUser.id = 999;
 
-        subject.selectedUsersFromFriendsList = [mockedSecondUser];
+        subject.selectedUsersFromParticipantsList = [mockedSecondUser];
 
-        expect(subject.isUserSelectedFromFriendsList(mockedFirstUser)).toBeFalsy();
-        expect(subject.isUserSelectedFromFriendsList(mockedSecondUser)).toBeTruthy();
+        expect(subject.isUserSelectedFromParticipantsList(mockedFirstUser)).toBeFalsy();
+        expect(subject.isUserSelectedFromParticipantsList(mockedSecondUser)).toBeTruthy();
 	});
 
 	it('Exercise participants filter', () => {
@@ -77,29 +77,29 @@ describe('NgChatOptionsComponent', () => {
         expect(result.length).toBe(0);
 	});
 
-	it('On check friends list during options action should push selected user', () => {
+	it('On check participants list during options action should push selected user', () => {
         let mockedUser = new ChatUser();
         mockedUser.id = 999;
 
-        subject.selectedUsersFromFriendsList = [];
+        subject.selectedUsersFromParticipantsList = [];
 
-        subject.onFriendsListCheckboxChange(mockedUser, true);
+        subject.onParticipantsListCheckboxChange(mockedUser, true);
 
-        expect(subject.selectedUsersFromFriendsList).not.toBeNull();
-        expect(subject.selectedUsersFromFriendsList.length).toBe(1);
-        expect(subject.selectedUsersFromFriendsList[0]).toBe(mockedUser);
-        expect(subject.selectedUsersFromFriendsList[0].id).toBe(mockedUser.id);
+        expect(subject.selectedUsersFromParticipantsList).not.toBeNull();
+        expect(subject.selectedUsersFromParticipantsList.length).toBe(1);
+        expect(subject.selectedUsersFromParticipantsList[0]).toBe(mockedUser);
+        expect(subject.selectedUsersFromParticipantsList[0].id).toBe(mockedUser.id);
     });
 
-	it('On uncheck friends list during options action should remove selected user', () => {
+	it('On uncheck participants list during options action should remove selected user', () => {
         let mockedUser = new ChatUser();
         mockedUser.id = 999;
 
-        subject.selectedUsersFromFriendsList = [mockedUser];
+        subject.selectedUsersFromParticipantsList = [mockedUser];
 
-        subject.onFriendsListCheckboxChange(mockedUser, false);
+        subject.onParticipantsListCheckboxChange(mockedUser, false);
 
-        expect(subject.selectedUsersFromFriendsList).not.toBeNull();
-        expect(subject.selectedUsersFromFriendsList.length).toBe(0);
+        expect(subject.selectedUsersFromParticipantsList).not.toBeNull();
+        expect(subject.selectedUsersFromParticipantsList.length).toBe(0);
     });
 });
