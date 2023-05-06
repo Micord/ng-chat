@@ -885,7 +885,7 @@ describe('NgChat', () => {
         expect(eventArgument).toBe(window.participant);
     });
 
-    it('Must not invoke onParticipantClicked event when a user is clicked on the friend list and the window is already open', () => {
+    it('Must not invoke onParticipantClicked event when a user is clicked on the participant list and the window is already open', () => {
         subject.historyEnabled = false;
 
         let eventInvoked = false;
@@ -937,7 +937,7 @@ describe('NgChat', () => {
         expect(eventArgument).toBe(null);
     });
 
-    it('Must invoke onParticipantClicked event when a user is clicked on the friend list', () => {
+    it('Must invoke onParticipantClicked event when a user is clicked on the participant list', () => {
         subject.historyEnabled = false;
         subject.windows = [];
 

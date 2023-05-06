@@ -58,7 +58,7 @@ export class NgChat implements OnInit, IChatController {
         }
         else
         {
-            this.activateFriendListFetch();
+            this.activateParticipantListFetch();
         }
     }
 
@@ -231,7 +231,7 @@ export class NgChat implements OnInit, IChatController {
                 this.chatAdapter.participantsListChangedHandler =
                   (participantsResponse) => this.onParticipantsListChanged(participantsResponse);
 
-                this.activateFriendListFetch();
+                this.activateParticipantListFetch();
 
                 this.bufferAudioFile();
 
@@ -262,7 +262,7 @@ export class NgChat implements OnInit, IChatController {
         }
     }
 
-    private activateFriendListFetch(): void {
+    private activateParticipantListFetch(): void {
         if (this.chatAdapter)
         {
             // Loading current users list

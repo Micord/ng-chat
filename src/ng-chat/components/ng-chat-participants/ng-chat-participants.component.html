@@ -13,7 +13,7 @@
 			<i class="check-icon"></i>
 		</a>
 	</div>
-	<input *ngIf="searchEnabled" id="ng-chat-search_friend" class="participants-search-bar" type="search"
+	<input *ngIf="searchEnabled" id="ng-chat-search_participant" class="participants-search-bar" type="search"
          [placeholder]="localization.searchPlaceholder" [(ngModel)]="searchInput" />
 	<ul id="ng-chat-users" *ngIf="!isCollapsed" [ngClass]="{'offset-search': searchEnabled}">
 		<li *ngFor="let user of filteredParticipants">

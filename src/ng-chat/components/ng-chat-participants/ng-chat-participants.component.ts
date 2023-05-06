@@ -78,7 +78,7 @@ export class NgChatParticipantsComponent implements OnChanges {
     get filteredParticipants(): IChatParticipant[]
     {
         if (this.searchInput.length > 0){
-            // Searches in the friend list by the inputted search string
+            // Searches in the participant list by the inputted search string
             return this.participants.filter(x => x.displayName.toUpperCase().includes(this.searchInput.toUpperCase()));
         }
 
