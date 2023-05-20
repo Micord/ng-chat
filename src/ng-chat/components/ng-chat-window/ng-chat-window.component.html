@@ -58,7 +58,9 @@
 				<div class="icon-wrapper">
 					<i class="user-icon"></i>
 				</div>
-				<span class="ng-chat-participant-name">{{chatWindow.participant | groupMessageDisplayName:message}}</span>
+				<span class="ng-chat-participant-name">
+          {{chatWindow.participant | groupMessageDisplayName:message}}
+        </span>
 			</ng-container>
 			<ng-container [ngSwitch]="message.type">
 				<div *ngSwitchCase="MessageType.Text"
@@ -82,18 +84,24 @@
 					<div *ngIf="message.file.previewSrc; then imagePreview else mimeType"></div>
 					<ng-template #imagePreview>
 						<img src="{{message.file.previewSrc}}" class="image-message"
-                 alt="{{message.file.fileName}}" (click)="this.markMessagesAsRead([message])"/>
+                 alt="{{message.file.fileName}}"
+                 (click)="this.markMessagesAsRead([message])"/>
 					</ng-template>
 					<ng-template #mimeType>
 						<img src="{{message.file.previewSrc}}" class="image-message"
-                 alt="{{message.file.mimeType}}" (click)="this.markMessagesAsRead([message])"/>
+                 alt="{{message.file.mimeType}}"
+                 (click)="this.markMessagesAsRead([message])"/>
 					</ng-template>
-					<div class="file-message-icon-container" (click)="this.fileUploadAdapter.downloadFile(message)">
+					<div class="file-message-icon-container"
+               (click)="this.fileUploadAdapter.downloadFile(message)">
 						<i class="paperclip-icon"></i>
 					</div>
 					<a class="file-details" [attr.href]="message.file.downloadUrl" target="_blank"
-             rel="noopener noreferrer" (click)="this.fileUploadAdapter.downloadFile(message)" download>
-						<span class="file-message-title" [attr.title]="message.file.fileName">{{message.file.fileName}}</span>
+             rel="noopener noreferrer" (click)="this.fileUploadAdapter.downloadFile(message)"
+             download>
+						<span class="file-message-title" [attr.title]="message.file.fileName">
+              {{message.file.fileName}}
+            </span>
 						<span *ngIf="message.file.fileSizeInBytes"  class="file-message-size">
               {{message.file.fileSizeInBytes}} Bytes
             </span>

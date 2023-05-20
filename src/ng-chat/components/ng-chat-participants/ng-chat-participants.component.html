@@ -1,15 +1,18 @@
 <div id="ng-chat-people"
      [ngClass]="{'primary-outline-color': true, 'primary-background': true, 'ng-chat-people-collapsed': isCollapsed}">
-	<a href="javascript:void(0);" class="ng-chat-title secondary-background shadowed" (click)="onChatTitleClicked()">
+	<a href="javascript:void(0);" class="ng-chat-title secondary-background shadowed"
+     (click)="onChatTitleClicked()">
 		<span>
 			{{localization.title}}
 		</span>
 	</a>
-	<div *ngIf="currentActiveOption" class="ng-chat-people-actions" (click)="onParticipantsListActionCancelClicked()">
+	<div *ngIf="currentActiveOption" class="ng-chat-people-actions"
+       (click)="onParticipantsListActionCancelClicked()">
 		<a href="javascript:void(0);" class="ng-chat-people-action">
 			<i class="remove-icon"></i>
 		</a>
-		<a href="javascript:void(0);" class="ng-chat-people-action" (click)="onParticipantsListActionConfirmClicked()">
+		<a href="javascript:void(0);" class="ng-chat-people-action"
+       (click)="onParticipantsListActionConfirmClicked()">
 			<i class="check-icon"></i>
 		</a>
 	</div>
@@ -29,8 +32,16 @@
 					<i class="user-icon"></i>
 				</div>
 				<strong title="{{user.displayName}}">{{user.displayName}}</strong>
-				<span [ngClass]="{'ng-chat-participant-status': true, 'online': user.status == ChatParticipantStatus.Online, 'busy': user.status == ChatParticipantStatus.Busy, 'away': user.status == ChatParticipantStatus.Away, 'offline': user.status == ChatParticipantStatus.Offline}" title="{{chatParticipantStatusDescriptor(user.status, localization)}}"></span>
-				<span *ngIf="unreadMessagesTotalByParticipant(user).length > 0" class="ng-chat-unread-messages-count unread-messages-counter-container primary-text">{{unreadMessagesTotalByParticipant(user)}}</span>
+				<span [ngClass]="{'ng-chat-participant-status': true,
+				'online': user.status == ChatParticipantStatus.Online,
+				'busy': user.status == ChatParticipantStatus.Busy,
+				'away': user.status == ChatParticipantStatus.Away,
+				'offline': user.status == ChatParticipantStatus.Offline}"
+              title="{{chatParticipantStatusDescriptor(user.status, localization)}}"></span>
+				<span *ngIf="unreadMessagesTotalByParticipant(user).length > 0"
+              class="ng-chat-unread-messages-count unread-messages-counter-container primary-text">
+          {{unreadMessagesTotalByParticipant(user)}}
+        </span>
 			</div>
 		</li>
 	</ul>
