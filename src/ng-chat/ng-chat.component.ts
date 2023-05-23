@@ -331,6 +331,7 @@ export class NgChat implements OnInit, IChatController {
                 this.participantsResponse = participantsResponse;
 
                 this.participants = participantsResponse.map((response: ParticipantResponse) => {
+                    this.openChatWindow(response.participant);
                     return response.participant;
                 });
             })
@@ -405,6 +406,7 @@ export class NgChat implements OnInit, IChatController {
             });
 
             this.participantsInteractedWith = [];
+            this.openChatWindow(this.participants[0]);
         }
     }
 
