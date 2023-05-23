@@ -11,4 +11,5 @@ export class Message
     public dateSent?: Date;
     public dateSeen?: Date;
     public file?: Attachment;
+    public isDeleted?: boolean;
 }

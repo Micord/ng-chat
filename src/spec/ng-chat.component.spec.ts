@@ -1061,7 +1061,7 @@ describe('NgChat', () => {
             isActive: false,
             displayLabel: 'Test',
             action: null,
-            validateContext: null
+            validateParticipantContext: null
         } as IChatOption;
 
         subject.currentActiveOption = mockedOption;

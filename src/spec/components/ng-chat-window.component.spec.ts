@@ -257,10 +257,10 @@ describe('NgChatWindowComponent', () => {
         expect(result.length).toBeGreaterThanOrEqual(1);
         expect(result[0].displayLabel).toBe("Add People");
         expect(result[0].action).not.toBeNull();
-        expect(result[0].validateContext).not.toBeNull();
+        expect(result[0].validateParticipantContext).not.toBeNull();
 
-        expect(result[0].validateContext(chattingTo)).toBeTruthy();
-        expect(result[0].validateContext(new Chat())).toBeFalsy();
+        expect(result[0].validateParticipantContext(chattingTo)).toBeTruthy();
+        expect(result[0].validateParticipantContext(new Chat())).toBeFalsy();
     });
 
     it('Must return empty chat options when participant is not an user', () => {

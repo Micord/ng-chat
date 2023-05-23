@@ -21,7 +21,7 @@
 	<ul id="ng-chat-users" *ngIf="!isCollapsed" [ngClass]="{'offset-search': searchEnabled}">
 		<li *ngFor="let user of filteredParticipants">
 			<input
-				*ngIf="currentActiveOption && currentActiveOption.validateContext(user)"
+				*ngIf="currentActiveOption && currentActiveOption.validateParticipantContext(user)"
 				type="checkbox"
 				class="ng-chat-users-checkbox"
 				(change)="onParticipantsListCheckboxChange(user, $event.target.checked)"

@@ -30,7 +30,7 @@ describe('NgChatOptionsComponent', () => {
 		const option: IChatOption = {
 			isActive: false,
 			chattingTo: mockedWindow,
-			validateContext: (participant: IChatParticipant) => !!participant,
+			validateParticipantContext: (participant: IChatParticipant) => !!participant,
 			action: (participant: ChatWindow) => {
 				actionInvoked = true;
 				actionInvokedArgument = participant;
@@ -55,7 +55,7 @@ describe('NgChatOptionsComponent', () => {
 			isActive: false,
 			chattingTo: mockedWindow,
 			action: null,
-			validateContext: null,
+			validateParticipantContext: null,
 			displayLabel: "Test Option"
 		}
 
