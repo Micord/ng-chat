@@ -9,11 +9,18 @@ export abstract class ChatAdapter
 
     public abstract listParticipants(): Observable<ParticipantResponse[]>;
 
-    public abstract getMessageHistory(destinataryId: any): Observable<Message[]>;
+    public abstract getMessageHistory(): Observable<Message[]>;
 
     public abstract sendMessage(message: Message): void;
 
+    public abstract deleteMessages(messages: Message[]): void;
+
     // ### Adapter/Chat income/ingress events ###
+
+    public onChatWindowOpening(participant: IChatParticipant, messages: Message[]): void
+    {
+        this.chatWindowOpeningHandler(participant, messages);
+    }
 
     public onParticipantsListChanged(participantsResponse: ParticipantResponse[]): void
     {
@@ -27,7 +34,12 @@ export abstract class ChatAdapter
 
     // Event handlers
     /** @internal */
-    participantsListChangedHandler: (participantsResponse: ParticipantResponse[]) => void  = (participantsResponse: ParticipantResponse[]) => {};
+    chatWindowOpeningHandler: (participant: IChatParticipant, messages: Message[]) =>
+      void  = (participant: IChatParticipant, messages: Message[]) => {};
     /** @internal */
-    messageReceivedHandler: (participant: IChatParticipant, message: Message) => void = (participant: IChatParticipant, message: Message) => {};
+    participantsListChangedHandler: (participantsResponse: ParticipantResponse[]) =>
+      void  = (participantsResponse: ParticipantResponse[]) => {};
+    /** @internal */
+    messageReceivedHandler: (participant: IChatParticipant, message: Message) =>
+      void = (participant: IChatParticipant, message: Message) => {};
 }

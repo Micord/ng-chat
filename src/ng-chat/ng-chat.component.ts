@@ -12,10 +12,10 @@ import { ChatParticipantStatus } from "./core/chat-participant-status.enum";
 import { ScrollDirection } from "./core/scroll-direction.enum";
 import { Localization, StatusDescription } from './core/localization';
 import { IChatController } from './core/chat-controller';
-import { PagedHistoryChatAdapter } from './core/paged-history-chat-adapter';
 import { IFileUploadAdapter } from './core/file-upload-adapter';
 import { Theme } from './core/theme.enum';
 import { IChatOption } from './core/chat-option';
+import { ChatOptionType } from "./core/chat-option-type.enum";
 import { IChatParticipant } from "./core/chat-participant";
 
 import { map } from 'rxjs/operators';
@@ -90,7 +90,7 @@ export class NgChat implements OnInit, IChatController {
     public linkfyEnabled: boolean = true;
 
     @Input()
-    public audioEnabled: boolean = true;
+    public audioEnabled: boolean = false;
 
     @Input()
     public searchEnabled: boolean = true;
@@ -178,7 +178,8 @@ export class NgChat implements OnInit, IChatController {
 
     public participantsInteractedWith: IChatParticipant[] = [];
 
-    public currentActiveOption: IChatOption | null;
+    public currentActiveMessageOption: IChatOption | null;
+    public currentActiveParticipantOption: IChatOption | null;
 
     private pollingIntervalWindowInstance: number;
 
@@ -226,16 +227,21 @@ export class NgChat implements OnInit, IChatController {
                 this.initializeBrowserNotifications();
 
                 // Binding event listeners
+                this.chatAdapter.chatWindowOpeningHandler =
+                  (participant, messages) =>
+                    this.onChatWindowOpening(participant, messages);
                 this.chatAdapter.messageReceivedHandler =
-                  (participant, msg) => this.onMessageReceived(participant, msg);
+                  (participant, message) =>
+                    this.onMessageReceived(participant, message);
                 this.chatAdapter.participantsListChangedHandler =
-                  (participantsResponse) => this.onParticipantsListChanged(participantsResponse);
+                  (participantsResponse) =>
+                    this.onParticipantsListChanged(participantsResponse);
 
                 this.activateParticipantListFetch();
 
                 this.bufferAudioFile();
 
-                this.hasPagedHistory = this.chatAdapter instanceof PagedHistoryChatAdapter;
+                this.hasPagedHistory = false;
 
                 this.isBootstrapped = true;
             }
@@ -331,7 +337,6 @@ export class NgChat implements OnInit, IChatController {
                 this.participantsResponse = participantsResponse;
 
                 this.participants = participantsResponse.map((response: ParticipantResponse) => {
-                    this.openChatWindow(response.participant);
                     return response.participant;
                 });
             })
@@ -340,44 +345,18 @@ export class NgChat implements OnInit, IChatController {
     }
 
     fetchMessageHistory(window: ChatWindow) {
-        // Not ideal but will keep this until we decide if we are shipping pagination with the default adapter
-        if (this.chatAdapter instanceof PagedHistoryChatAdapter)
-        {
-            window.isLoadingHistory = true;
+        this.chatAdapter.getMessageHistory()
+        .pipe(
+            map((result: Message[]) => {
+                result.forEach((message : Message) => this.assertMessageType(message));
 
-            this.chatAdapter.getMessageHistoryByPage(window.participant.id, this.historyPageSize, ++window.historyPage)
-            .pipe(
-                map((result: Message[]) => {
-                    result.forEach((message) => this.assertMessageType(message));
+                window.messages = result.concat(window.messages);
+                window.isLoadingHistory = false;
 
-                    window.messages = result.concat(window.messages);
-                    window.isLoadingHistory = false;
-
-                  const direction: ScrollDirection = (window.historyPage == 1)
-                                                     ? ScrollDirection.Bottom
-                                                     : ScrollDirection.Top;
-                    window.hasMoreMessages = result.length == this.historyPageSize;
-
-                    setTimeout(() =>
-                                 this.onFetchMessageHistoryLoaded(result, window, direction, true));
-                })
-            ).subscribe();
-        }
-        else
-        {
-            this.chatAdapter.getMessageHistory(window.participant.id)
-            .pipe(
-                map((result: Message[]) => {
-                    result.forEach((message) => this.assertMessageType(message));
-
-                    window.messages = result.concat(window.messages);
-                    window.isLoadingHistory = false;
-
-                    setTimeout(() =>
-                                 this.onFetchMessageHistoryLoaded(result, window, ScrollDirection.Bottom));
-                })
-            ).subscribe();
-        }
+                setTimeout(() =>
+                    this.onFetchMessageHistoryLoaded(result, window, ScrollDirection.Bottom));
+            })
+        ).subscribe();
     }
 
     private onFetchMessageHistoryLoaded(messages: Message[], window: ChatWindow,
@@ -406,7 +385,16 @@ export class NgChat implements OnInit, IChatController {
             });
 
             this.participantsInteractedWith = [];
-            this.openChatWindow(this.participants[0]);
+        }
+    }
+
+    private onChatWindowOpening(participant: IChatParticipant, messages: Message[])
+    {
+        if (participant && messages)
+        {
+            const chatWindow = this.openChatWindow(participant);
+            chatWindow[0].messages= messages;
+            this.scrollChatWindow(chatWindow[0], ScrollDirection.Bottom);
         }
     }
 
@@ -447,10 +435,15 @@ export class NgChat implements OnInit, IChatController {
     }
 
     private cancelOptionPrompt(): void {
-        if (this.currentActiveOption)
+        if (this.currentActiveMessageOption)
         {
-            this.currentActiveOption.isActive = false;
-            this.currentActiveOption = null;
+            this.currentActiveMessageOption.isActive = false;
+            this.currentActiveMessageOption = null;
+        }
+        if (this.currentActiveParticipantOption)
+        {
+            this.currentActiveParticipantOption.isActive = false;
+            this.currentActiveParticipantOption = null;
         }
     }
 
@@ -458,10 +451,10 @@ export class NgChat implements OnInit, IChatController {
         this.cancelOptionPrompt();
     }
 
-    onOptionPromptConfirmed(event: any): void {
+    onOptionPromptConfirmed(messages: Message[]): void {
         // For now this is fine as there is only one option available.
         // Introduce option types and type checking if a new option is added.
-
+        this.chatAdapter.deleteMessages(messages);
         // Canceling current state
         this.cancelOptionPrompt();
     }
@@ -604,7 +597,12 @@ export class NgChat implements OnInit, IChatController {
     }
 
     onWindowOptionTriggered(option: IChatOption): void {
-        this.currentActiveOption = option;
+        if (option.type == ChatOptionType.Message) {
+            this.currentActiveMessageOption = option;
+        }
+        else if (option.type == ChatOptionType.Participant) {
+            this.currentActiveParticipantOption = option;
+        }
     }
 
     triggerToggleChatWindowVisibility(): void {

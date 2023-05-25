@@ -84,7 +84,7 @@ __Additional Settings__
 * [historyPageSize]{number}: Set the page size for each request if you are using the paged history chat adapter (Beta). Default is 10.
 * [emojisEnabled]{boolean}: Enables emoji parsing on the messages. Default is true.
 * [linkfyEnabled]{boolean}: Transforms links within the messages to valid HTML links. Default is true.
-* [audioEnabled]{boolean}: Enables audio notifications on received messages. Default is true.
+* [audioEnabled]{boolean}: Enables audio notifications on received messages. Default is false.
 * [audioSource]{string}: WAV source of the audio notification. Default is a RAW github WAV content from ng-chat repository.
 * [persistWindowsState]{boolean}: Saves the state of current open windows on the local storage. Default is true.
 * [browserNotificationsEnabled]{boolean}: Enables browser notifications on received messages. Default is true.

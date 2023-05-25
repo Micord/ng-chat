@@ -100,7 +100,12 @@ export class NgChatParticipantsComponent implements OnChanges {
         else
         {
             let totalUnreadMessages = this.participantsResponse
-                .filter(x => x.participant.id == participant.id && !this.participantsInteractedWith.find(u => u.id == participant.id) && x.metadata && x.metadata.totalUnreadMessages > 0)
+                .filter(participantResponse =>
+                          participantResponse.participant.id == participant.id
+                          && !this.participantsInteractedWith.find(u => u.id == participant.id)
+                          && participantResponse.metadata
+                          && participantResponse.metadata.totalUnreadMessages > 0
+                )
                 .map((participantResponse) => {
                     return participantResponse.metadata.totalUnreadMessages
                 })[0];

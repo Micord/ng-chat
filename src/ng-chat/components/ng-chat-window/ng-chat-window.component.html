@@ -41,7 +41,19 @@
                      (activeOptionTrackerChange)="activeOptionTrackerChange($event)">
     </ng-chat-options>
 	</div>
-	<div #chatMessages class="ng-chat-messages primary-background">
+
+  <div *ngIf="currentActiveOption" class="ng-chat-window-actions"
+       (click)="onMessagesListActionCancelClicked()">
+    <a href="javascript:void(0);" class="ng-chat-window-action">
+      <i class="remove-icon"></i>
+    </a>
+    <a href="javascript:void(0);" class="ng-chat-window-action"
+       (click)="onMessagesListActionConfirmClicked()">
+      <i class="check-icon"></i>
+    </a>
+  </div>
+
+  <div #chatMessages class="ng-chat-messages primary-background">
 		<div *ngIf="chatWindow.isLoadingHistory" class="ng-chat-loading-wrapper">
 			<div class="loader">Loading history...</div>
 		</div>
@@ -54,6 +66,12 @@
 
 		<div *ngFor="let message of chatWindow.messages; let i = index"
          [ngClass]="{'ng-chat-message': true, 'ng-chat-message-received': message.fromId != userId}">
+      <input
+        *ngIf="currentActiveOption && currentActiveOption.validateMessageContext(message)"
+        type="checkbox"
+        class="ng-chat-users-checkbox"
+        (change)="onMessagesListCheckboxChange(message, $event.target.checked)"
+        [checked]="isMessageSelectedFromParticipantsList(message)"/>
 			<ng-container *ngIf="isAvatarVisible(chatWindow, message, i)">
 				<div class="icon-wrapper">
 					<i class="user-icon"></i>

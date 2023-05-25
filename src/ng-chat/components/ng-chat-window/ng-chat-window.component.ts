@@ -8,9 +8,11 @@ import { ScrollDirection } from "../../core/scroll-direction.enum";
 import { Localization } from '../../core/localization';
 import { IFileUploadAdapter } from '../../core/file-upload-adapter';
 import { IChatOption } from '../../core/chat-option';
+import { ChatOptionType } from "../../core/chat-option-type.enum";
 import { IChatParticipant } from "../../core/chat-participant";
 import { MessageCounter } from "../../core/message-counter";
 import { chatParticipantStatusDescriptor } from '../../core/chat-participant-status-descriptor';
+import {ChatUser} from "../../core/chat-user";
 
 @Component({
     selector: 'ng-chat-window',
@@ -32,6 +34,9 @@ export class NgChatWindowComponent {
 
     @Input()
     public localization: Localization;
+
+    @Input()
+    public currentActiveOption: IChatOption | null;
 
     @Input()
     public emojisEnabled: boolean = true;
@@ -60,6 +65,17 @@ export class NgChatWindowComponent {
     @Output()
     public onLoadHistoryTriggered: EventEmitter<ChatWindow> = new EventEmitter();
 
+    @Output()
+    public onMessageClicked: EventEmitter<Message> = new EventEmitter();
+
+    @Output()
+    public onOptionPromptCanceled: EventEmitter<any> = new EventEmitter();
+
+    @Output()
+    public onOptionPromptConfirmed: EventEmitter<Message[]> = new EventEmitter();
+
+    public selectedMessages: Message[] = [];
+
     @ViewChild('chatMessages') chatMessages: any;
     @ViewChild('nativeFileInput') nativeFileInput: ElementRef;
     @ViewChild('chatWindowInput') chatWindowInput: any;
@@ -75,12 +91,13 @@ export class NgChatWindowComponent {
     defaultWindowOptions(currentWindow: ChatWindow): IChatOption[]
     {
             return [{
+                type: ChatOptionType.Message,
                 isActive: false,
                 chattingTo: currentWindow,
-                validateContext: (participant: IChatParticipant) => {
-                    return !!participant;
-                },
-                displayLabel: 'Add People' // TODO: Localize this
+                validateMessageContext: (message: Message) =>
+                     !message.isDeleted && message.fromId == this.userId,
+                validateParticipantContext: (participant: IChatParticipant) => false,
+                displayLabel: 'Delete messages' // TODO: Localize this
             }];
     }
 
@@ -264,5 +281,40 @@ export class NgChatWindowComponent {
                     // TODO: Invoke a file upload adapter error here
                 });
         }
+    }
+
+    cleanUpMessageSelection = () => this.selectedMessages = [];
+
+    isMessageSelectedFromParticipantsList(message: Message) : boolean
+    {
+       return (this.selectedMessages.filter(item => item.id == message.id)).length > 0
+    }
+
+    onMessagesListCheckboxChange(selectedMessage: Message, isChecked: boolean): void
+    {
+        if(isChecked) {
+            this.selectedMessages.push(selectedMessage);
+        }
+        else
+        {
+            this.selectedMessages.splice(this.selectedMessages.indexOf(selectedMessage), 1);
+        }
+    }
+
+    onMessageClick(clickedMessage: Message): void
+    {
+        this.onMessageClicked.emit(clickedMessage);
+    }
+
+    onMessagesListActionCancelClicked(): void
+    {
+      this.onOptionPromptCanceled.emit();
+      this.cleanUpMessageSelection();
+    }
+
+    onMessagesListActionConfirmClicked() : void
+    {
+      this.onOptionPromptConfirmed.emit(this.selectedMessages);
+      this.cleanUpMessageSelection();
     }
 }

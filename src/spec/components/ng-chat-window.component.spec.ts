@@ -255,7 +255,7 @@ describe('NgChatWindowComponent', () => {
 
         expect(result).not.toBeNull();
         expect(result.length).toBeGreaterThanOrEqual(1);
-        expect(result[0].displayLabel).toBe("Add People");
+        expect(result[0].displayLabel).toBe("Delete messages");
         expect(result[0].action).not.toBeNull();
         expect(result[0].validateParticipantContext).not.toBeNull();
 

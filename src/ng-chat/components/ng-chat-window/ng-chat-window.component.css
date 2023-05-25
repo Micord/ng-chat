@@ -1,10 +1,10 @@
 .ng-chat-window
 {
     right: 260px;
-    height: 360px;
+    height: 540px;
     z-index: 999;
     bottom: 0;
-    width: 300px;
+    width: 450px;
     position: fixed;
     border-width: 1px;
     border-style: solid;
@@ -205,6 +205,26 @@
                       width: 100%;
                       height: auto;
                     }
+
+.ng-chat-window-actions
+{
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+}
+.ng-chat-window-actions > a.ng-chat-window-action {
+  display: inline-block;
+  width: 21px;
+  height: 21px;
+  margin-right: 8px;
+  text-decoration: none;
+  border: none;
+  border-radius: 25px;
+  padding: 1px;
+}
 
 /* Mobile viewport only */
 @media only screen and (max-width: 581px) {

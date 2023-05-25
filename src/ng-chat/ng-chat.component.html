@@ -1,21 +1,23 @@
 <link *ngIf="customTheme" rel="stylesheet" [href]='customTheme | sanitize'>
 
-<div id="ng-chat" *ngIf="!isDisabled && isBootstrapped && showParticipantsList" [ngClass]="theme">
-    <ng-chat-participants
-        [localization]="localization"
-        [userId]="userId"
-        [isCollapsed]="isCollapsed"
-        [searchEnabled]="searchEnabled"
-        [participants]="participants"
-        [participantsResponse]="participantsResponse"
-        [participantsInteractedWith]="participantsInteractedWith"
-        [window]="chatWindow"
-        [currentActiveOption]="currentActiveOption"
-        (onParticipantClicked)="onParticipantClickedFromParticipantsList($event)"
-        (onOptionPromptCanceled)="onOptionPromptCanceled()"
-        (onOptionPromptConfirmed)="onOptionPromptConfirmed($event)"
-    >
-    </ng-chat-participants>
+<div id="ng-chat" *ngIf="!isDisabled && isBootstrapped" [ngClass]="theme">
+    <div *ngIf="showParticipantsList">
+        <ng-chat-participants
+            [localization]="localization"
+            [userId]="userId"
+            [isCollapsed]="isCollapsed"
+            [searchEnabled]="searchEnabled"
+            [participants]="participants"
+            [participantsResponse]="participantsResponse"
+            [participantsInteractedWith]="participantsInteractedWith"
+            [window]="chatWindow"
+            [currentActiveOption]="currentActiveParticipantOption"
+            (onParticipantClicked)="onParticipantClickedFromParticipantsList($event)"
+            (onOptionPromptCanceled)="onOptionPromptCanceled()"
+            (onOptionPromptConfirmed)="onOptionPromptConfirmed($event)"
+        >
+        </ng-chat-participants>
+    </div>
 
     <div *ngIf="!!chatWindow"
          [ngClass]="{'ng-chat-window': true, 'primary-outline-color': true,
@@ -27,6 +29,7 @@
             [localization]="localization"
             [userId]="userId"
             [chatWindow]="chatWindow"
+            [currentActiveOption]="currentActiveMessageOption"
             [emojisEnabled]="emojisEnabled"
             [linkfyEnabled]="linkfyEnabled"
             [showMessageDate]="showMessageDate"
@@ -36,6 +39,8 @@
             (onMessageSent)="onWindowMessageSent($event)"
             (onOptionTriggered)="onWindowOptionTriggered($event)"
             (onLoadHistoryTriggered)="fetchMessageHistory($event)"
+            (onOptionPromptCanceled)="onOptionPromptCanceled()"
+            (onOptionPromptConfirmed)="onOptionPromptConfirmed($event)"
         >
         </ng-chat-window>
     </div>
