@@ -4,7 +4,7 @@ import { ChatParticipantStatus } from "./chat-participant-status.enum";
 
 export class Chat implements IChatParticipant
 {
-    public id: string = Guid.newGuid();
+    public id: any = Guid.newGuid();
     public displayName: string;
     public status: ChatParticipantStatus = ChatParticipantStatus.Online;
 }

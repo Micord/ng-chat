@@ -39,7 +39,6 @@ export class NgChat implements OnInit, IChatController {
 
     // Exposes enums for the ng-template
     public ChatParticipantStatus = ChatParticipantStatus;
-    public MessageType = MessageType;
 
     private _isDisabled: boolean = false;
 
@@ -162,7 +161,8 @@ export class NgChat implements OnInit, IChatController {
 
     public hasPagedHistory: boolean = false;
 
-    // Don't want to add this as a setting to simplify usage. Previous placeholder and title settings available to be used, or use full Localization object.
+    // Don't want to add this as a setting to simplify usage. Previous placeholder and title
+    // settings available to be used, or use full Localization object.
     private statusDescription: StatusDescription = {
         online: 'Online',
         busy: 'Busy',
@@ -272,18 +272,15 @@ export class NgChat implements OnInit, IChatController {
         if (this.chatAdapter)
         {
             // Loading current users list
+            this.fetchParticipantsList(true);
             if (this.pollParticipantsList){
                 // Setting a long poll interval to update the participants list
-                this.fetchParticipantsList(true);
                 this.pollingIntervalWindowInstance = window
                   .setInterval(() =>
                                  this.fetchParticipantsList(false), this.pollingInterval);
             }
-            else
-            {
-                // Since polling was disabled, a participants list update mechanism will have to be implemented in the ChatAdapter.
-                this.fetchParticipantsList(true);
-            }
+            // Since polling was disabled, a participants list update mechanism will have
+            // to be implemented in the ChatAdapter.
         }
     }
 
@@ -336,9 +333,8 @@ export class NgChat implements OnInit, IChatController {
             map((participantsResponse: ParticipantResponse[]) => {
                 this.participantsResponse = participantsResponse;
 
-                this.participants = participantsResponse.map((response: ParticipantResponse) => {
-                    return response.participant;
-                });
+                this.participants = participantsResponse
+                  .map((response: ParticipantResponse) => response.participant);
             })
         ).subscribe(() => {
         });
@@ -350,7 +346,7 @@ export class NgChat implements OnInit, IChatController {
             map((result: Message[]) => {
                 result.forEach((message : Message) => this.assertMessageType(message));
 
-                window.messages = result.concat(window.messages);
+                window.messages = this.hasPagedHistory ? result.concat(window.messages) : result;
                 window.isLoadingHistory = false;
 
                 setTimeout(() =>
@@ -412,7 +408,7 @@ export class NgChat implements OnInit, IChatController {
 
                 this.scrollChatWindow(chatWindow[0], ScrollDirection.Bottom);
 
-                if (chatWindow[0].hasFocus)
+                if (chatWindow[0].hasFocus && !chatWindow[0].isCollapsed)
                 {
                     this.markMessagesAsRead([message]);
                 }
@@ -421,7 +417,8 @@ export class NgChat implements OnInit, IChatController {
             this.emitMessageSound(chatWindow[0]);
 
             // Github issue #58
-            // Do not push browser notifications with message content for privacy purposes if the 'maximizeWindowOnNewMessage' setting is off and this is a new chat window.
+            // Do not push browser notifications with message content for privacy purposes
+            // if the 'maximizeWindowOnNewMessage' setting is off and this is a new chat window.
             if (this.maximizeWindowOnNewMessage || (!chatWindow[1] && !chatWindow[0].isCollapsed))
             {
                 // Some messages are not pushed because they are loaded by fetching the history hence why we supply the message here
@@ -459,7 +456,7 @@ export class NgChat implements OnInit, IChatController {
         this.cancelOptionPrompt();
     }
 
-    // Opens a new chat whindow. Takes care of available viewport
+    // Opens a new chat window. Takes care of available viewport
     // Works for opening a chat window for an user or for a group
     // Returns => [Window: Window object reference, boolean: Indicates if this window is a new chat window]
     private openChatWindow(participant: IChatParticipant, focusOnNewWindow: boolean = false,
@@ -468,7 +465,7 @@ export class NgChat implements OnInit, IChatController {
         // Is this window opened?
         const openedWindow = this.chatWindow;
 
-        if (!openedWindow)
+        if (!openedWindow || openedWindow.participant.id != participant.id)
         {
             if (invokedByUserClick)
             {
@@ -521,7 +518,7 @@ export class NgChat implements OnInit, IChatController {
     }
 
     private assertMessageType(message: Message): void {
-        // Always fallback to "Text" messages to avoid rendenring issues
+        // Always fallback to "Text" messages to avoid rendering issues
         if (!message.type)
         {
             message.type = MessageType.Text;
@@ -570,14 +567,6 @@ export class NgChat implements OnInit, IChatController {
                 notification.close();
             }, message.message.length <= 50 ? 5000 : 7000); // More time to read longer messages
         }
-    }
-
-    private getChatWindowComponentInstance(targetWindow: ChatWindow): NgChatWindowComponent | null {
-        if (this.ngChatWindow){
-          return this.ngChatWindow;
-        }
-
-        return null;
     }
 
     // Scrolls a chat window message flow to the bottom
