@@ -8,6 +8,7 @@ import { EmojifyPipe } from './pipes/emojify.pipe';
 import { LinkfyPipe } from './pipes/linkfy.pipe';
 import { SanitizePipe } from './pipes/sanitize.pipe';
 import { GroupMessageDisplayNamePipe } from './pipes/group-message-display-name.pipe';
+import { NgChatContextMenuComponent } from "./components/ng-chat-context-menu/ng-chat-context-menu.component";
 import { NgChatOptionsComponent } from './components/ng-chat-options/ng-chat-options.component';
 import { NgChatParticipantsComponent } from './components/ng-chat-participants/ng-chat-participants.component';
 import { NgChatWindowComponent } from './components/ng-chat-window/ng-chat-window.component';
@@ -20,6 +21,7 @@ import { NgChatWindowComponent } from './components/ng-chat-window/ng-chat-windo
     LinkfyPipe,
     SanitizePipe,
     GroupMessageDisplayNamePipe,
+    NgChatContextMenuComponent,
     NgChatOptionsComponent,
     NgChatParticipantsComponent,
     NgChatWindowComponent

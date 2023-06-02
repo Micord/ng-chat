@@ -309,7 +309,7 @@ describe('NgChatWindowComponent', () => {
             message: 'Test'
         };
 
-        const isVisible = subject.isAvatarVisible(window, message, 0);
+        const isVisible = subject.isAuthorNameVisible(window, message, 0);
 
         expect(isVisible).toBeFalse();
     });
@@ -331,7 +331,7 @@ describe('NgChatWindowComponent', () => {
             message: 'Test'
         };
 
-        const isVisible = subject.isAvatarVisible(window, message, 0);
+        const isVisible = subject.isAuthorNameVisible(window, message, 0);
 
         expect(isVisible).toBeTrue();
     });
@@ -361,7 +361,7 @@ describe('NgChatWindowComponent', () => {
 
         window.messages.push(previousMessage)
 
-        const isVisible = subject.isAvatarVisible(window, message, 1);
+        const isVisible = subject.isAuthorNameVisible(window, message, 1);
 
         expect(isVisible).toBeTrue();
     });
@@ -391,7 +391,7 @@ describe('NgChatWindowComponent', () => {
 
         window.messages.push(previousMessage)
 
-        const isVisible = subject.isAvatarVisible(window, message, 1);
+        const isVisible = subject.isAuthorNameVisible(window, message, 1);
 
         expect(isVisible).toBeFalse();
     });

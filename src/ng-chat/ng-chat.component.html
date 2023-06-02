@@ -35,6 +35,7 @@
             [showMessageDate]="showMessageDate"
             [messageDatePipeFormat]="messageDatePipeFormat"
             [hasPagedHistory]="hasPagedHistory"
+            (onDeleteMessage)="onDeleteMessage($event)"
             (onMessagesSeen)="onWindowMessagesSeen($event)"
             (onMessageSent)="onWindowMessageSent($event)"
             (onOptionTriggered)="onWindowOptionTriggered($event)"

@@ -64,18 +64,16 @@
       </a>
 		</div>
 
-		<div *ngFor="let message of chatWindow.messages; let i = index"
-         [ngClass]="{'ng-chat-message': true, 'ng-chat-message-received': message.fromId != userId}">
+    <div *ngFor="let message of chatWindow.messages; let i = index"
+         [ngClass]="{'ng-chat-message': true, 'ng-chat-message-received': message.fromId != userId}"
+          (contextmenu)="onRightClick($event, message)">
       <input
         *ngIf="currentActiveOption && currentActiveOption.validateMessageContext(message)"
         type="checkbox"
         class="ng-chat-users-checkbox"
         (change)="onMessagesListCheckboxChange(message, $event.target.checked)"
         [checked]="isMessageSelectedFromParticipantsList(message)"/>
-			<ng-container *ngIf="isAvatarVisible(chatWindow, message, i)">
-				<div class="icon-wrapper">
-					<i class="user-icon"></i>
-				</div>
+			<ng-container *ngIf="isAuthorNameVisible(chatWindow, message, i)">
 				<span class="ng-chat-participant-name">
           {{chatWindow.participant | groupMessageDisplayName:message}}
         </span>
@@ -129,7 +127,15 @@
 		</div>
 	</div>
 
-	<div class="ng-chat-footer primary-outline-color primary-background">
+  <div *ngIf="activateContextMenu" style="position: fixed;"
+       [style.left.px]="menuTopLeftPosition.x"
+       [style.top.px]="menuTopLeftPosition.y">
+    <ng-chat-context-menu
+      (contextMenuAction)="deleteMessage()">
+    </ng-chat-context-menu>
+  </div>
+
+  <div class="ng-chat-footer primary-outline-color primary-background">
 		<input #chatWindowInput
 			type="text"
 			[ngModel]="chatWindow.newMessage | emojify:emojisEnabled"

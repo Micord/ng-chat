@@ -12,7 +12,6 @@ import { ChatOptionType } from "../../core/chat-option-type.enum";
 import { IChatParticipant } from "../../core/chat-participant";
 import { MessageCounter } from "../../core/message-counter";
 import { chatParticipantStatusDescriptor } from '../../core/chat-participant-status-descriptor';
-import {ChatUser} from "../../core/chat-user";
 
 @Component({
     selector: 'ng-chat-window',
@@ -54,6 +53,9 @@ export class NgChatWindowComponent {
     public hasPagedHistory: boolean = true;
 
     @Output()
+    public onDeleteMessage: EventEmitter<Message> = new EventEmitter();
+
+    @Output()
     public onMessagesSeen: EventEmitter<Message[]> = new EventEmitter();
 
     @Output()
@@ -88,6 +90,43 @@ export class NgChatWindowComponent {
     public MessageType = MessageType;
     public chatParticipantStatusDescriptor = chatParticipantStatusDescriptor;
 
+    // right click context menu
+    public menuTopLeftPosition =  {x: 0, y: 0};
+    public activateContextMenu: boolean = false;
+    private selectedMessage: Message;
+
+    onRightClick(event: MouseEvent, message: Message) {
+        console.info("right click on message id=" + message.id);
+        // preventDefault avoids to show the visualization of the right-click menu of the browser
+        event.preventDefault();
+        // record the mouse position in our object
+        this.menuTopLeftPosition.x = event.clientX;
+        this.menuTopLeftPosition.y = event.clientY;
+
+        if (this.contextMenuShownOnMessage(message)) {
+            // hide context menu
+            this.activateContextMenu = false;
+        }
+        else if (this.contextMenuShowCondition(message)) {
+            this.selectedMessage = message;
+            // show context menu
+            this.activateContextMenu = true;
+        }
+        else {
+          this.activateContextMenu = false;
+        }
+    }
+
+    private contextMenuShowCondition(message: Message): boolean {
+      return message && (!this.userId || message.fromId == this.userId);
+
+    }
+
+    private contextMenuShownOnMessage(message: Message): boolean {
+      return this.activateContextMenu && message && this.selectedMessage
+             && this.selectedMessage.id == message.id;
+    }
+
     defaultWindowOptions(currentWindow: ChatWindow): IChatOption[]
     {
             return [{
@@ -102,14 +141,15 @@ export class NgChatWindowComponent {
     }
 
     // Asserts if a user avatar is visible in a chat cluster
-    isAvatarVisible(window: ChatWindow, message: Message, index: number): boolean
+    isAuthorNameVisible(window: ChatWindow, message: Message, index: number): boolean
     {
         if (message.fromId != this.userId){
             if (index == 0){
                 return true; // First message, good to show the thumbnail
             }
             else{
-                // Check if the previous message belongs to the same user, if it belongs there is no need to show the avatar again to form the message cluster
+                // Check if the previous message belongs to the same user, if it belongs there is
+                // no need to show the avatar again to form the message cluster
                 if (window.messages[index - 1].fromId != message.fromId){
                     return true;
                 }
@@ -184,12 +224,26 @@ export class NgChatWindowComponent {
         }
     }
 
-    markMessagesAsRead(messages: Message[]): void
+    deactivateContextMenu(): void
+    {
+      this.activateContextMenu = false;
+    }
+
+    deleteMessage(): void
+    {
+      if (this.selectedMessage) {
+        this.onDeleteMessage.emit(this.selectedMessage);
+        this.activateContextMenu = false;
+      }
+    }
+
+      markMessagesAsRead(messages: Message[]): void
     {
         this.onMessagesSeen.emit(messages);
     }
 
-    fetchMessageHistory(window: ChatWindow): void {
+    fetchMessageHistory(window: ChatWindow): void
+    {
         this.onLoadHistoryTriggered.emit(window);
     }
 
@@ -198,8 +252,8 @@ export class NgChatWindowComponent {
         - Tabs between windows on TAB or SHIFT + TAB
         - Closes the current focused window on ESC
     */
-   onChatInputTyped(event: any, window: ChatWindow): void
-   {
+    onChatInputTyped(event: any, window: ChatWindow): void
+    {
        switch (event.keyCode)
        {
            case 13:
@@ -228,7 +282,7 @@ export class NgChatWindowComponent {
            case 27:
                break;
        }
-   }
+    }
 
     // Toggles a chat window visibility between maximized/minimized
     onChatWindowClicked(window: ChatWindow): void

@@ -599,4 +599,10 @@ export class NgChat implements OnInit, IChatController {
             this.ngChatWindow.onChatWindowClicked(this.chatWindow);
         }
     }
+
+    onDeleteMessage(message: Message): void {
+      if (message) {
+        this.chatAdapter.deleteMessages([message]);
+      }
+    }
 }
