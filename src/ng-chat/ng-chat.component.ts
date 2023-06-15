@@ -137,7 +137,7 @@ export class NgChat implements OnInit, IChatController {
     public customTheme: string;
 
     @Input()
-    public messageDatePipeFormat: string = "short";
+    public messageDatePipeFormat: string = "dd.MM.yyyy HH:mm";
 
     @Input()
     public showMessageDate: boolean = true;
