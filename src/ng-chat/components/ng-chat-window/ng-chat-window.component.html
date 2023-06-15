@@ -149,7 +149,7 @@
 		<!-- File Upload -->
 		<ng-container *ngIf="fileUploadAdapter">
 			<a *ngIf="!isUploadingFile(chatWindow)" class="btn-add-file" (click)="triggerNativeFileUpload(chatWindow)">
-				<i class="upload-icon"></i>
+				<i class="upload-icon" [title]="localization.uploadFileTitle"></i>
 			</a>
 			<input
 				type="file"

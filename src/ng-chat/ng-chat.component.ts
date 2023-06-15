@@ -110,6 +110,9 @@ export class NgChat implements OnInit, IChatController {
     public searchPlaceholder: string = "Search";
 
     @Input()
+    public uploadFileTitle: string = "Upload file";
+
+    @Input()
     public browserNotificationsEnabled: boolean = true;
 
     @Input() // TODO: This might need a better content strategy
@@ -304,6 +307,7 @@ export class NgChat implements OnInit, IChatController {
             this.localization = {
                 messagePlaceholder: this.messagePlaceholder,
                 searchPlaceholder: this.searchPlaceholder,
+                uploadFileTitle: this.uploadFileTitle,
                 title: this.title,
                 statusDescription: this.statusDescription,
                 browserNotificationTitle: this.browserNotificationTitle,
