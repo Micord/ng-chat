@@ -1,5 +1,6 @@
 import {
-  Component, EventEmitter, Input, HostListener, OnInit, Output, ViewChild, ViewEncapsulation
+  Component, EventEmitter, Input, HostListener, OnInit, Output, ViewChild, ViewEncapsulation,
+  ChangeDetectorRef
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -35,7 +36,7 @@ import { NgChatWindowComponent } from './components/ng-chat-window/ng-chat-windo
 })
 
 export class NgChat implements OnInit, IChatController {
-    constructor(private _httpClient: HttpClient) { }
+    constructor(private _httpClient: HttpClient, private cdr: ChangeDetectorRef) { }
 
     // Exposes enums for the ng-template
     public ChatParticipantStatus = ChatParticipantStatus;
@@ -455,7 +456,8 @@ export class NgChat implements OnInit, IChatController {
     onOptionPromptConfirmed(messages: Message[]): void {
         // For now this is fine as there is only one option available.
         // Introduce option types and type checking if a new option is added.
-        this.chatAdapter.deleteMessages(messages);
+        this.chatAdapter.deleteMessages(messages)
+          .then(() => this.cdr.detectChanges());
         // Canceling current state
         this.cancelOptionPrompt();
     }
@@ -606,7 +608,8 @@ export class NgChat implements OnInit, IChatController {
 
     onDeleteMessage(message: Message): void {
       if (message) {
-        this.chatAdapter.deleteMessages([message]);
+        this.chatAdapter.deleteMessages([message])
+          .then(() => this.cdr.detectChanges());
       }
     }
 }
