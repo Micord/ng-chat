@@ -1,10 +1,10 @@
 .ng-chat-window
 {
     right: 260px;
-    height: 360px;
+    height: 540px;
     z-index: 999;
     bottom: 0;
-    width: 300px;
+    width: 450px;
     position: fixed;
     border-width: 1px;
     border-style: solid;
@@ -88,13 +88,14 @@
         }
         .ng-chat-window .ng-chat-messages .ng-chat-message .ng-chat-participant-name
         {
-            display: inline-block;
-            margin-left: 40px;
+            display: inline;
+            float: left;
+            margin-left: 10px;
             padding-bottom: 5px;
             font-weight: bold;
             font-size: 0.8em;
             text-overflow: ellipsis;
-            max-width: 180px;
+            width: 300px;
         }
             .ng-chat-window .ng-chat-messages .ng-chat-message > .icon-wrapper
             {
@@ -119,7 +120,7 @@
         .ng-chat-window .ng-chat-messages .ng-chat-message > div
         {
             float: right;
-            width: 182px;
+            width: 300px;
             padding: 0;
             margin-top: 0;
             border-radius: 5px;
@@ -132,7 +133,7 @@
         .ng-chat-window .ng-chat-messages .ng-chat-message.ng-chat-message-received > div.received-chat-message-container
         {
             float: left;
-            margin-left: 40px;
+            margin-left: 10px;
             padding-top: 7px;
             padding-bottom: 7px;
             border-style: solid;
@@ -143,7 +144,7 @@
             .ng-chat-window .ng-chat-messages .ng-chat-message .file-message-container
             {
                 float: right;
-                width: 202px;
+                width: 300px;
                 border-style: solid;
                 border-width: 3px;
                 border-radius: 5px;
@@ -158,8 +159,8 @@
             .ng-chat-window .ng-chat-messages .ng-chat-message .file-message-container.received
             {
                 float: left;
-                margin-left: 40px;
-                width: 208px;
+                margin-left: 10px;
+                width: 300px;
             }
                 .ng-chat-window .ng-chat-messages .ng-chat-message .file-message-container > .file-message-icon-container
                 {
@@ -205,6 +206,26 @@
                       width: 100%;
                       height: auto;
                     }
+
+.ng-chat-window-actions
+{
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+}
+.ng-chat-window-actions > a.ng-chat-window-action {
+  display: inline-block;
+  width: 21px;
+  height: 21px;
+  margin-right: 8px;
+  text-decoration: none;
+  border: none;
+  border-radius: 25px;
+  padding: 1px;
+}
 
 /* Mobile viewport only */
 @media only screen and (max-width: 581px) {

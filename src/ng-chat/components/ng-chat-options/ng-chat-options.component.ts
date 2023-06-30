@@ -7,7 +7,6 @@ import { IChatOption } from '../../core/chat-option';
     styleUrls: ['./ng-chat-options.component.css']
 })
 export class NgChatOptionsComponent {
-
 	constructor() { }
 
 	@Input()

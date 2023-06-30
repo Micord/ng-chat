@@ -1,32 +1,23 @@
 import { NgChat } from '../ng-chat/ng-chat.component';
-import { User } from '../ng-chat/core/user';
+import { ChatUser } from '../ng-chat/core/chat-user';
 import { ParticipantResponse } from '../ng-chat/core/participant-response';
-import { Window } from '../ng-chat/core/window';
+import { ChatWindow } from '../ng-chat/core/chat-window';
 import { ChatAdapter } from '../ng-chat/core/chat-adapter';
-import { IChatGroupAdapter } from '../ng-chat/core/chat-group-adapter';
 import { Observable, of } from 'rxjs';
 import { Message } from '../ng-chat/core/message';
 import { MessageType } from '../ng-chat/core/message-type.enum';
 import { Theme } from '../ng-chat/core/theme.enum';
-import { ChatParticipantType } from '../ng-chat/core/chat-participant-type.enum';
-import { Group } from '../ng-chat/core/group';
 import { IChatOption } from '../ng-chat/core/chat-option';
 import { NgChatWindowComponent } from '../ng-chat/components/ng-chat-window/ng-chat-window.component';
 
 class MockableAdapter extends ChatAdapter {
-    public listFriends(): Observable<ParticipantResponse[]> {
+    public listParticipants(): Observable<ParticipantResponse[]> {
         throw new Error("Method not implemented.");
     }
     public getMessageHistory(destinataryId: any): Observable<Message[]> {
         throw new Error("Method not implemented.");
     }
     public sendMessage(message: Message): void {
-        throw new Error("Method not implemented.");
-    }
-}
-
-class MockableGroupAdapter implements IChatGroupAdapter {
-    groupCreated(group: Group): void {
         throw new Error("Method not implemented.");
     }
 }
@@ -44,19 +35,18 @@ describe('NgChat', () => {
         subject = new NgChat(null); // HttpClient related methods are tested elsewhere
         subject.userId = 123;
         subject.adapter = new MockableAdapter();
-        subject.groupAdapter = new MockableGroupAdapter();
         subject.audioFile = new MockableHTMLAudioElement();
     });
 
     it('Should have default title', () => {
-        expect(subject.title).toBe('Friends');
+        expect(subject.title).toBe('Participants');
     });
 
     it('Should have default message placeholder', () => {
         expect(subject.messagePlaceholder).toBe('Type a message');
     });
 
-    it('Should have default friends search placeholder', () => {
+    it('Should have default participants search placeholder', () => {
         expect(subject.searchPlaceholder).toBe('Search');
     });
 
@@ -80,18 +70,14 @@ describe('NgChat', () => {
         expect(subject.audioSource).not.toBeUndefined();
     });
 
-    it('Friends list search must be enabled by default', () => {
+    it('Participants list search must be enabled by default', () => {
         expect(subject.searchEnabled).not.toBeFalsy();
     });
 
     it('Persistent windows state must be enabled by default', () => {
         expect(subject.persistWindowsState).toBeTruthy();
     });
-    
-    it('Is viewport mobile case state must be disabled by default', () => {
-        expect(subject.isViewportOnMobileEnabled).toBeFalsy();
-    });
-    
+
     it('isCollapsed must be disabled by default', () => {
         expect(subject.isCollapsed).toBeFalsy();
     });
@@ -144,96 +130,53 @@ describe('NgChat', () => {
         expect(subject.customTheme).toBeUndefined();
     });
 
-    it('Must display max visible windows on viewport', () => {
-        subject.viewPortTotalArea = 960; // Just enough for 2 windows based on the default window size of 320
-
-        expect(subject.windows.length).toBe(0);
-
-        spyOn(subject, 'updateWindowsState');
-
-        subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false)
-        ];
-
-        subject.NormalizeWindows();
-
-        expect(subject.windows.length).toBe(2);
-        expect(subject.updateWindowsState).toHaveBeenCalledTimes(1);
-        expect(subject.updateWindowsState).toHaveBeenCalledWith(subject.windows);
-    });
-
-    it('Must display max visible windows on viewport when "hideFriendsList" is enabled', () => {
-        subject.viewPortTotalArea = 960;
-        subject.hideFriendsList = true
-
-        expect(subject.windows.length).toBe(0);
-
-        spyOn(subject, 'updateWindowsState');
-
-        subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false)
-        ];
-
-        subject.NormalizeWindows();
-
-        expect(subject.windows.length).toBe(3);
-        expect(subject.updateWindowsState).toHaveBeenCalledTimes(1);
-        expect(subject.updateWindowsState).toHaveBeenCalledWith(subject.windows);
-    });
-
-    it('Must hide friends list when there is not enough viewport to display at least one chat window ', () => {
+    it('Must hide participants list when there is not enough viewport to display at least one chat window ', () => {
         subject.viewPortTotalArea = 400;
 
         expect(subject.windows.length).toBe(0);
 
         subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false)
+            new ChatWindow(null, false, false),
+            new ChatWindow(null, false, false)
         ];
 
         subject.NormalizeWindows();
 
         expect(subject.windows.length).toBe(0);
-        expect(subject.unsupportedViewport).toBe(true);
     });
 
-    it('Must invoke adapter on fetchFriendsList', () => {
-        spyOn(MockableAdapter.prototype, 'listFriends').and.returnValue(of([]));
+    it('Must invoke adapter on fetchParticipantsList', () => {
+        spyOn(MockableAdapter.prototype, 'listParticipants').and.returnValue(of([]));
 
-        subject.fetchFriendsList(false);
+        subject.fetchParticipantsList(false);
 
-        expect(MockableAdapter.prototype.listFriends).toHaveBeenCalledTimes(1);
+        expect(MockableAdapter.prototype.listParticipants).toHaveBeenCalledTimes(1);
     });
 
-    it('Must invoke restore windows state on fetchFriendsList when bootstrapping', () => {
-        spyOn(MockableAdapter.prototype, 'listFriends').and.returnValue(of([]));
+    it('Must invoke restore windows state on fetchParticipantsList when bootstrapping', () => {
+        spyOn(MockableAdapter.prototype, 'listParticipants').and.returnValue(of([]));
         spyOn(subject, 'restoreWindowsState');
 
-        subject.fetchFriendsList(true);
+        subject.fetchParticipantsList(true);
 
         expect(subject.restoreWindowsState).toHaveBeenCalledTimes(1);
     });
 
-    it('Must not invoke restore windows state on fetchFriendsList when not bootstrapping', () => {
-        spyOn(MockableAdapter.prototype, 'listFriends').and.returnValue(of([]));
+    it('Must not invoke restore windows state on fetchParticipantsList when not bootstrapping', () => {
+        spyOn(MockableAdapter.prototype, 'listParticipants').and.returnValue(of([]));
         spyOn(subject, 'restoreWindowsState');
 
-        subject.fetchFriendsList(false);
+        subject.fetchParticipantsList(false);
 
         expect(subject.restoreWindowsState).not.toHaveBeenCalled();
     });
 
-    it('Must update participants property when onFriendsListChanged is invoked', () => {
+    it('Must update participants property when onParticipantsListChanged is invoked', () => {
         expect(subject.participantsResponse).toBeUndefined();
 
-        subject.participantsInteractedWith = [new User()];
+        subject.participantsInteractedWith = [new ChatUser()];
 
-        subject.onFriendsListChanged([
+        subject.onParticipantsListChanged([
             new ParticipantResponse(),
             new ParticipantResponse()
         ]);
@@ -244,12 +187,10 @@ describe('NgChat', () => {
     });
 
     it('Must return existing open chat window when requesting a chat window instance', () => {
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         subject.windows = [
@@ -271,12 +212,10 @@ describe('NgChat', () => {
     it('Must open a new window on a openChatWindow request when it is not opened yet', () => {
         subject.historyEnabled = false;
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         let result = subject.openChatWindow(user);
@@ -292,12 +231,10 @@ describe('NgChat', () => {
     it('Must focus on the new window on a openChatWindow request when argument is supplied', () => {
         subject.historyEnabled = false;
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         spyOn(subject, 'focusOnWindow');
@@ -311,12 +248,10 @@ describe('NgChat', () => {
     it('Must not focus on the new window on a openChatWindow request when argument is not supplied', () => {
         subject.historyEnabled = false;
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         spyOn(subject, 'focusOnWindow');
@@ -328,12 +263,10 @@ describe('NgChat', () => {
     });
 
     it('Must load history from ChatAdapter when opening a window that is not yet opened', () => {
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         spyOn(MockableAdapter.prototype, 'getMessageHistory').and.returnValue(of([]));
@@ -371,7 +304,7 @@ describe('NgChat', () => {
     });
 
     it('Should play HTMLAudioElement when emitting a message sound on an unfocused window', () => {
-        let window = new Window(null, false, false);
+        let window = new ChatWindow(null, false, false);
 
         spyOn(MockableHTMLAudioElement.prototype, 'play');
 
@@ -381,7 +314,7 @@ describe('NgChat', () => {
     });
 
     it('Should not play HTMLAudioElement when emitting a message sound on a focused window', () => {
-        let window = new Window(null, false, false);
+        let window = new ChatWindow(null, false, false);
 
         window.hasFocus = true;
 
@@ -393,7 +326,7 @@ describe('NgChat', () => {
     });
 
     it('Should not play HTMLAudioElement when audio notification is disabled', () => {
-        let window = new Window(null, false, false);
+        let window = new ChatWindow(null, false, false);
 
         subject.audioEnabled = false;
 
@@ -406,7 +339,7 @@ describe('NgChat', () => {
 
     it('Must invoke message notification method on new messages', () => {
         let message = new Message();
-        let user = new User();
+        let user = new ChatUser();
 
         spyOn(subject, 'emitMessageSound');
         spyOn(subject, 'openChatWindow').and.returnValue([null, true]);
@@ -419,7 +352,7 @@ describe('NgChat', () => {
 
     it('Must invoke message type assertion method on new messages', () => {
         let message = new Message();
-        let user = new User();
+        let user = new ChatUser();
 
         spyOn(subject, 'assertMessageType');
 
@@ -435,8 +368,8 @@ describe('NgChat', () => {
 
     it('Must mark message as seen on new messages if the current window has focus', () => {
         let message = new Message();
-        let user = new User();
-        let window = new Window(null, false, false);
+        let user = new ChatUser();
+        let window = new ChatWindow(null, false, false);
 
         window.hasFocus = true;
 
@@ -452,8 +385,8 @@ describe('NgChat', () => {
 
     it('Must not mark message as seen on new messages if the current window does not have focus', () => {
         let message = new Message();
-        let user = new User();
-        let window = new Window(null, false, false);
+        let user = new ChatUser();
+        let window = new ChatWindow(null, false, false);
 
         window.hasFocus = false;
 
@@ -471,13 +404,9 @@ describe('NgChat', () => {
     });
 
     it('Should not use local storage persistency if persistWindowsState is disabled', () => {
-        let windows = [new Window(null, false, false)];
-
         subject.persistWindowsState = false;
 
         spyOn(localStorage, 'setItem');
-
-        subject.updateWindowsState(windows);
 
         expect(localStorage.setItem).not.toHaveBeenCalled();
     });
@@ -489,18 +418,11 @@ describe('NgChat', () => {
             persistedValue = value;
         });
 
-        let firstUser = new User();
-        let secondUser = new User();
+        let firstUser = new ChatUser();
+        let secondUser = new ChatUser();
 
         firstUser.id = 88;
         secondUser.id = 99;
-
-        let firstWindow = new Window(firstUser, false, false);
-        let secondWindow = new Window(secondUser, false, false);
-
-        let windows = [firstWindow, secondWindow];
-
-        subject.updateWindowsState(windows);
 
         expect(localStorage.setItem).toHaveBeenCalledTimes(1);
         expect(persistedValue).toBe(JSON.stringify([88, 99]));
@@ -517,8 +439,8 @@ describe('NgChat', () => {
     });
 
     it('Restore windows state exercise', () => {
-        let firstUser = new User();
-        let secondUser = new User();
+        let firstUser = new ChatUser();
+        let secondUser = new ChatUser();
 
         firstUser.id = 88;
         secondUser.id = 99;
@@ -539,83 +461,6 @@ describe('NgChat', () => {
         expect(pushedParticipants.length).toBe(2);
         expect(pushedParticipants[0]).toBe(firstUser);
         expect(pushedParticipants[1]).toBe(secondUser);
-    });
-
-    it('Must invoke window state update when closing a chat window', () => {
-        subject.windows = [new Window(null, false, false)];
-
-        spyOn(subject, 'updateWindowsState');
-
-        subject.closeWindow(subject.windows[0]);
-
-        expect(subject.updateWindowsState).toHaveBeenCalledTimes(1);
-    });
-
-    it('Must focus on closest window when a chat window closed event is triggered via ESC key', () => {
-        const currentWindow = new Window(null, false, false);
-        const closestWindow = new Window(null, false, false);
-
-        spyOn(subject, 'closeWindow');
-
-        spyOn(subject, 'getClosestWindow').and.returnValue(closestWindow);
-
-        spyOn(subject, 'focusOnWindow').and.callFake((window: Window, callback: Function) => {
-            callback(); // This should invoke closeWindow
-        });;
-
-        subject.onWindowChatClosed({ closedWindow: currentWindow, closedViaEscapeKey: true });
-
-        expect(subject.closeWindow).toHaveBeenCalledTimes(1);
-        expect(subject.getClosestWindow).toHaveBeenCalledTimes(1);
-        expect(subject.focusOnWindow).toHaveBeenCalledTimes(1);
-    });
-
-    it('Must not focus on closest window when the ESC key is pressed and there is no other window opened', () => {
-        const currentWindow = new Window(null, false, false);
-
-        spyOn(subject, 'closeWindow');
-        spyOn(subject, 'getClosestWindow').and.returnValue(undefined);
-        spyOn(subject, 'focusOnWindow');
-
-        subject.onWindowChatClosed({ closedWindow: currentWindow, closedViaEscapeKey: true });
-
-        expect(subject.closeWindow).toHaveBeenCalledTimes(1);
-        expect(subject.getClosestWindow).toHaveBeenCalledTimes(1);
-        expect(subject.focusOnWindow).not.toHaveBeenCalled();
-    });
-
-    it('Must move to the next chat window when the TAB key is pressed', () => {
-        subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false)
-        ];
-
-        let focusedWindow: Window = null;
-
-        const focusSpy = spyOn(subject, 'focusOnWindow').and.callFake((windowToFocus: Window) => focusedWindow = windowToFocus);
-
-        subject.onWindowTabTriggered({ triggeringWindow: subject.windows[1], shiftKeyPressed: false });
-
-        expect(focusSpy).toHaveBeenCalledTimes(1);
-        expect(focusedWindow).toBe(subject.windows[0]);
-    });
-
-    it('Must move to the previous chat window when SHIFT + TAB keys are pressed', () => {
-        subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false)
-        ];
-
-        let focusedWindow: Window = null;
-
-        const focusSpy = spyOn(subject, 'focusOnWindow').and.callFake((windowToFocus: Window) => focusedWindow = windowToFocus);
-
-        subject.onWindowTabTriggered({ triggeringWindow: subject.windows[1], shiftKeyPressed: true });
-
-        expect(focusSpy).toHaveBeenCalledTimes(1);
-        expect(focusedWindow).toBe(subject.windows[2]);
     });
 
     it('Must copy default text when a localization object was not supplied while initializing default text', () => {
@@ -659,9 +504,9 @@ describe('NgChat', () => {
 
     it('FocusOnWindow exercise', () => {
         subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false)
+            new ChatWindow(null, false, false),
+            new ChatWindow(null, false, false),
+            new ChatWindow(null, false, false)
         ];
 
         subject.chatWindows = {
@@ -716,14 +561,14 @@ describe('NgChat', () => {
             toArray: () => { }
         };
 
-        subject.focusOnWindow(new Window(null, false, false));
+        subject.focusOnWindow(new ChatWindow(null, false, false));
     });
 
     it('GetClosestWindow must return next relative right chat window', () => {
         subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false)
+            new ChatWindow(null, false, false),
+            new ChatWindow(null, false, false),
+            new ChatWindow(null, false, false)
         ];
 
         let result = subject.getClosestWindow(subject.windows[2]);
@@ -733,9 +578,9 @@ describe('NgChat', () => {
 
     it('GetClosestWindow must return previous chat window on 0 based index', () => {
         subject.windows = [
-            new Window(null, false, false),
-            new Window(null, false, false),
-            new Window(null, false, false)
+            new ChatWindow(null, false, false),
+            new ChatWindow(null, false, false),
+            new ChatWindow(null, false, false)
         ];
 
         let result = subject.getClosestWindow(subject.windows[0]);
@@ -745,7 +590,7 @@ describe('NgChat', () => {
 
     it('GetClosestWindow must return undefined when there is only one chat window opened on the chat', () => {
         subject.windows = [
-            new Window(null, false, false)
+            new ChatWindow(null, false, false)
         ];
 
         let result = subject.getClosestWindow(subject.windows[0]);
@@ -756,7 +601,7 @@ describe('NgChat', () => {
     it('GetClosestWindow must return undefined when there is no open chat window on the chat', () => {
         subject.windows = [];
 
-        let result = subject.getClosestWindow(new Window(null, false, false));
+        let result = subject.getClosestWindow(new ChatWindow(null, false, false));
 
         expect(result).toBe(undefined);
     });
@@ -785,7 +630,7 @@ describe('NgChat', () => {
 
     it('Must invoke emitBrowserNotification on new messages', () => {
         let message = new Message();
-        let user = new User();
+        let user = new ChatUser();
 
         spyOn(subject, 'emitBrowserNotification');
         spyOn(subject, 'openChatWindow').and.returnValue([null, true]);
@@ -802,7 +647,7 @@ describe('NgChat', () => {
         let argMessage = null;
         message.message = 'Test message';
 
-        let user = new User();
+        let user = new ChatUser();
         subject.historyEnabled = true;
 
         spyOn(subject, 'emitBrowserNotification').and.callFake((window, message) => {
@@ -820,7 +665,7 @@ describe('NgChat', () => {
 
     it('Must not invoke emitBrowserNotification when the maximizeWindowOnNewMessage setting is disabled', () => {
         let message = new Message();
-        let user = new User();
+        let user = new ChatUser();
 
         subject.maximizeWindowOnNewMessage = false;
 
@@ -836,8 +681,8 @@ describe('NgChat', () => {
 
     it('Must invoke emitBrowserNotification when the maximizeWindowOnNewMessage setting is disabled but the window is maximized', () => {
         let message = new Message();
-        let user = new User();
-        let window = new Window(null, false, false);
+        let user = new ChatUser();
+        let window = new ChatWindow(null, false, false);
 
         subject.maximizeWindowOnNewMessage = false;
 
@@ -853,8 +698,8 @@ describe('NgChat', () => {
 
     it('Must not invoke emitBrowserNotification when the maximizeWindowOnNewMessage setting is disabled and the window is collapsed', () => {
         let message = new Message();
-        let user = new User();
-        let window = new Window(null, false, true);
+        let user = new ChatUser();
+        let window = new ChatWindow(null, false, true);
 
         subject.maximizeWindowOnNewMessage = false;
 
@@ -870,8 +715,8 @@ describe('NgChat', () => {
 
     it('Must not invoke emitBrowserNotification when the maximizeWindowOnNewMessage setting is disabled and the window was freshly opened', () => {
         let message = new Message();
-        let user = new User();
-        let window = new Window(null, false, false);
+        let user = new ChatUser();
+        let window = new ChatWindow(null, false, false);
 
         subject.maximizeWindowOnNewMessage = false;
 
@@ -889,7 +734,6 @@ describe('NgChat', () => {
         subject.historyEnabled = false;
         subject.windows = [];
 
-        spyOn(subject, 'updateWindowsState');
         spyOn(subject, 'focusOnWindow');
 
         let eventInvoked = false;
@@ -900,12 +744,10 @@ describe('NgChat', () => {
             eventArgument = e;
         });
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         subject.openChatWindow(user, false, true);
@@ -925,12 +767,10 @@ describe('NgChat', () => {
             eventArgument = e;
         });
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         subject.windows = [
@@ -946,33 +786,27 @@ describe('NgChat', () => {
     });
 
     it('Must pop existing window when viewport does not have enough space for another window', () => {
-        const user: User = {
-            participantType: ChatParticipantType.User,
+        const user: ChatUser = {
             id: 777,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
-        
-        const newUser: User = {
-            participantType: ChatParticipantType.User,
+
+        const newUser: ChatUser = {
             id: 888,
             displayName: 'Test user 2',
             status: 1,
-            avatar: ''
         };
 
-        const userToBeRemoved: User = {
-            participantType: ChatParticipantType.User,
+        const userToBeRemoved: ChatUser = {
             id: 999,
             displayName: 'Test user 2',
             status: 1,
-            avatar: ''
         };
-        
-        const remainingWindow = new Window(user, false, false);
-        const windowToBeRemoved = new Window(userToBeRemoved, false, false);
-        
+
+        const remainingWindow = new ChatWindow(user, false, false);
+        const windowToBeRemoved = new ChatWindow(userToBeRemoved, false, false);
+
         subject.viewPortTotalArea = 960;
         subject.historyEnabled = false;
         subject.windows = [
@@ -980,7 +814,6 @@ describe('NgChat', () => {
             windowToBeRemoved
         ];
 
-        spyOn(subject, 'updateWindowsState');
         spyOn(subject, 'focusOnWindow');
 
         subject.openChatWindow(newUser, false, true);
@@ -990,43 +823,35 @@ describe('NgChat', () => {
         expect(subject.windows[1].participant).toBe(user);
     });
 
-    it('Must push to viewport when friends list is disabled exercise', () => {
-        const user: User = {
-            participantType: ChatParticipantType.User,
+    it('Must push to viewport when participants list is disabled exercise', () => {
+        const user: ChatUser = {
             id: 777,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
-        
-        const newUser: User = {
-            participantType: ChatParticipantType.User,
+
+        const newUser: ChatUser = {
             id: 888,
             displayName: 'Test user 2',
             status: 1,
-            avatar: ''
         };
 
-        const userThatWouldBeRemoved: User = {
-            participantType: ChatParticipantType.User,
+        const userThatWouldBeRemoved: ChatUser = {
             id: 999,
             displayName: 'Test user 2',
             status: 1,
-            avatar: ''
         };
-        
-        const remainingWindow = new Window(user, false, false);
-        const windowThatWouldBeRemoved = new Window(userThatWouldBeRemoved, false, false);
-        
-        subject.hideFriendsList = true;
-        subject.viewPortTotalArea = 961; // Would be enough for only 2 if the friends list was enabled. 1px more than window factor * 3
+
+        const remainingWindow = new ChatWindow(user, false, false);
+        const windowThatWouldBeRemoved = new ChatWindow(userThatWouldBeRemoved, false, false);
+
+        subject.viewPortTotalArea = 961; // Would be enough for only 2 if the participants list was enabled. 1px more than window factor * 3
         subject.historyEnabled = false;
         subject.windows = [
             remainingWindow,
             windowThatWouldBeRemoved
         ];
 
-        spyOn(subject, 'updateWindowsState');
         spyOn(subject, 'focusOnWindow');
 
         subject.openChatWindow(newUser, false, true);
@@ -1036,19 +861,15 @@ describe('NgChat', () => {
         expect(subject.windows[1].participant).toBe(user);
         expect(subject.windows[2].participant).toBe(userThatWouldBeRemoved);
     });
-    
+
     it('Must invoke onParticipantChatClosed event when a window is closed', () => {
-        const window = new Window({
-            participantType: ChatParticipantType.User,
+        const window = new ChatWindow({
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         }, false, false);
 
         subject.windows = [window];
-
-        spyOn(subject, 'updateWindowsState'); // Bypassing this
 
         let eventInvoked = false;
         let eventArgument = null;
@@ -1064,7 +885,7 @@ describe('NgChat', () => {
         expect(eventArgument).toBe(window.participant);
     });
 
-    it('Must not invoke onParticipantClicked event when a user is clicked on the friend list and the window is already open', () => {
+    it('Must not invoke onParticipantClicked event when a user is clicked on the participant list and the window is already open', () => {
         subject.historyEnabled = false;
 
         let eventInvoked = false;
@@ -1075,12 +896,10 @@ describe('NgChat', () => {
             eventArgument = e;
         });
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         subject.windows = [
@@ -1106,12 +925,10 @@ describe('NgChat', () => {
             eventArgument = e;
         });
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         subject.openChatWindow(user, true, false);
@@ -1120,7 +937,7 @@ describe('NgChat', () => {
         expect(eventArgument).toBe(null);
     });
 
-    it('Must invoke onParticipantClicked event when a user is clicked on the friend list', () => {
+    it('Must invoke onParticipantClicked event when a user is clicked on the participant list', () => {
         subject.historyEnabled = false;
         subject.windows = [];
 
@@ -1132,12 +949,10 @@ describe('NgChat', () => {
             eventArgument = e;
         });
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         subject.openChatWindow(user, true, true);
@@ -1149,12 +964,10 @@ describe('NgChat', () => {
     it('Must invoke openChatWindow when triggerOpenChatWindow is invoked', () => {
         let spy = spyOn(subject, 'openChatWindow');
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         subject.triggerOpenChatWindow(user);
@@ -1172,46 +985,14 @@ describe('NgChat', () => {
         expect(spy).not.toHaveBeenCalled();
     });
 
-    it('Must invoke closeWindow when triggerCloseChatWindow is invoked', () => {
-        let spy = spyOn(subject, 'closeWindow');
-
-        let user: User = {
-            participantType: ChatParticipantType.User,
-            id: 999,
-            displayName: 'Test user',
-            status: 1,
-            avatar: ''
-        };
-
-        let window: Window = new Window(user, false, false);
-        
-        subject.windows.push(window);
-
-        subject.triggerCloseChatWindow(user.id);
-
-        expect(spy).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(spy.calls.mostRecent().args.length).toBe(1);
-    });
-
-    it('Must not invoke closeWindow when triggerCloseChatWindow is invoked but user is not found', () => {
-        let spy = spyOn(subject, 'closeWindow');
-
-        subject.windows = [];
-
-        subject.triggerCloseChatWindow(1);
-
-        expect(spy).not.toHaveBeenCalled();
-    });
-
     it('Must invoke onChatWindowClicked when triggerToggleChatWindowVisibility is invoked', () => {
-        const currentUser = new User();
+        const currentUser = new ChatUser();
         currentUser.id = 1;
 
         const stubChatWindowComponent = new NgChatWindowComponent();
-        
+
         subject.windows = [
-            new Window(currentUser, false, false)
+            new ChatWindow(currentUser, false, false)
         ];
 
         spyOn(subject, 'getChatWindowComponentInstance').and.returnValue(stubChatWindowComponent);
@@ -1273,14 +1054,14 @@ describe('NgChat', () => {
     });
 
     it('onOptionPromptCanceled invoked should clear selection state', () => {
-        let mockedUser = new User();
+        let mockedUser = new ChatUser();
         mockedUser.id = 999;
-        
+
         let mockedOption = {
             isActive: false,
             displayLabel: 'Test',
             action: null,
-            validateContext: null
+            validateParticipantContext: null
         } as IChatOption;
 
         subject.currentActiveOption = mockedOption;
@@ -1289,37 +1070,5 @@ describe('NgChat', () => {
 
         expect(subject.currentActiveOption).toBeNull();
         expect(mockedOption.isActive).toBeFalsy();
-    });
-
-    it('onOptionPromptConfirmed invoked exercise', () => {
-        let mockedFirstUser = new User();
-        let mockedSecondUser = new User();
-        let createdGroup: Group = null;
-
-        mockedFirstUser.id = 888;
-        mockedSecondUser.id = 999;
-
-        // To test sorting of the name
-        mockedFirstUser.displayName = "ZZZ";
-        mockedSecondUser.displayName = "AAA";
-
-        const participants = [mockedFirstUser, mockedSecondUser];
-
-        spyOn(MockableGroupAdapter.prototype, 'groupCreated').and.callFake((group: Group) => {
-            createdGroup = group;
-        });
-
-        spyOn(subject, 'openChatWindow').and.returnValue([null, true]);
-
-        subject.onOptionPromptConfirmed(participants);
-
-        expect(createdGroup).not.toBeNull();
-        expect(createdGroup.chattingTo).not.toBeNull();
-        expect(createdGroup.chattingTo.length).toBe(2);
-        expect(createdGroup.chattingTo[0]).toBe(mockedFirstUser);
-        expect(createdGroup.chattingTo[1]).toBe(mockedSecondUser);
-        expect(createdGroup.displayName).toBe("AAA, ZZZ");
-        expect(MockableGroupAdapter.prototype.groupCreated).toHaveBeenCalledTimes(1);
-        expect(subject.openChatWindow).toHaveBeenCalledTimes(1);
     });
 });

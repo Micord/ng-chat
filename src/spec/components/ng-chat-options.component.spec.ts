@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { NgChatOptionsComponent } from '../../ng-chat/components/ng-chat-options/ng-chat-options.component';
 import { IChatOption } from '../../ng-chat/core/chat-option';
-import { Window } from '../../ng-chat/core/window';
 import { IChatParticipant } from '../../ng-chat/core/chat-participant';
+import { ChatWindow } from '../../ng-chat/core/chat-window';
 
 describe('NgChatOptionsComponent', () => {
 	let component: NgChatOptionsComponent;
@@ -24,14 +24,14 @@ describe('NgChatOptionsComponent', () => {
 
 	it('Should invoke option action when option is clicked', () => {
 		let actionInvoked = false;
-		let actionInvokedArgument: Window = null;
-		const mockedWindow = new Window(null, false, false);
+		let actionInvokedArgument: ChatWindow = null;
+		const mockedWindow = new ChatWindow(null, false, false);
 
 		const option: IChatOption = {
 			isActive: false,
 			chattingTo: mockedWindow,
-			validateContext: (participant: IChatParticipant) => true,
-			action: (participant: Window) => {
+			validateParticipantContext: (participant: IChatParticipant) => !!participant,
+			action: (participant: ChatWindow) => {
 				actionInvoked = true;
 				actionInvokedArgument = participant;
 			},
@@ -48,14 +48,14 @@ describe('NgChatOptionsComponent', () => {
 
 	it('Should not invoke option action when option action is null or undefined', () => {
 		let actionInvoked = false;
-		let actionInvokedArgument: Window = null;
-		const mockedWindow = new Window(null, false, false);
+		let actionInvokedArgument: ChatWindow = null;
+		const mockedWindow = new ChatWindow(null, false, false);
 
 		const option: IChatOption = {
 			isActive: false,
 			chattingTo: mockedWindow,
 			action: null,
-			validateContext: null,
+			validateParticipantContext: null,
 			displayLabel: "Test Option"
 		}
 

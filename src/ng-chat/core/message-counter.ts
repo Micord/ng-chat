@@ -1,4 +1,4 @@
-import { Window } from './window';
+import { ChatWindow } from './chat-window';
 
 export class MessageCounter
 {
@@ -6,10 +6,10 @@ export class MessageCounter
     {
         if (totalUnreadMessages > 0){
 
-            if (totalUnreadMessages > 99) 
+            if (totalUnreadMessages > 99)
                 return  "99+";
             else
-                return String(totalUnreadMessages); 
+                return String(totalUnreadMessages);
         }
 
         // Empty fallback.
@@ -21,14 +21,14 @@ export class MessageCounter
      * @param window The window instance to count the unread total messages.
      * @param currentUserId The current chat instance user id. In this context it would be the sender.
      */
-    public static unreadMessagesTotal(window: Window, currentUserId: any): string
+    public static unreadMessagesTotal(window: ChatWindow, currentUserId: any): string
     {
         let totalUnreadMessages = 0;
 
         if (window){
             totalUnreadMessages = window.messages.filter(x => x.fromId != currentUserId && !x.dateSeen).length;
         }
-            
+
         return MessageCounter.formatUnreadMessagesTotal(totalUnreadMessages);
     }
 }
