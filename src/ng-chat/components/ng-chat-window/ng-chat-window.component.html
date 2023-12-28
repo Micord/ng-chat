@@ -136,7 +136,7 @@
   </div>
 
   <div class="ng-chat-footer primary-outline-color primary-background">
-		<input #chatWindowInput
+		<textarea #chatWindowInput
 			type="text"
 			[ngModel]="chatWindow.newMessage | emojify:emojisEnabled"
 			(ngModelChange)="chatWindow.newMessage=$event"
@@ -144,7 +144,8 @@
 			[ngClass]="{'chat-window-input': true, 'has-side-action': fileUploadAdapter}"
 			(keydown)="onChatInputTyped($event, chatWindow)"
 			(blur)="toggleWindowFocus(chatWindow)"
-			(focus)="toggleWindowFocus(chatWindow)"/>
+			(focus)="toggleWindowFocus(chatWindow)">
+		</textarea>
 
 		<!-- File Upload -->
 		<ng-container *ngIf="fileUploadAdapter">

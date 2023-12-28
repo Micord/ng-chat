@@ -248,7 +248,7 @@ export class NgChatWindowComponent {
     }
 
     /*  Monitors pressed keys on a chat window
-        - Dispatches a message when the ENTER key is pressed
+        - Dispatches a message when the CTRL + ENTER keys are pressed
         - Tabs between windows on TAB or SHIFT + TAB
         - Closes the current focused window on ESC
     */
@@ -257,6 +257,10 @@ export class NgChatWindowComponent {
        switch (event.keyCode)
        {
            case 13:
+               if (!event.ctrlKey)
+               {
+                 break;
+               }
                if (window.newMessage && window.newMessage.trim() != "")
                {
                    let message = new Message();
