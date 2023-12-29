@@ -26,7 +26,7 @@
         border-top: 1px solid transparent;
         border-color: inherit;
     }
-        .ng-chat-window .ng-chat-footer > input
+        .ng-chat-window .ng-chat-footer > textarea
         {
             font-size:0.8em;
             box-sizing: border-box;
@@ -36,10 +36,19 @@
             width: 100%;
             border: none;
         }
-            .ng-chat-window .ng-chat-footer > input.has-side-action
+            .ng-chat-window .ng-chat-footer > textarea.has-side-action
             {
                 width: calc(100% - 30px);
             }
+        .ng-chat-window .ng-chat-footer .btn-send-message
+        {
+            position: absolute;
+            right: 35px;
+            bottom: 7px;
+            height: 20px;
+            width: 20px;
+            cursor: pointer;
+        }
         .ng-chat-window .ng-chat-footer .btn-add-file
         {
             position: absolute;

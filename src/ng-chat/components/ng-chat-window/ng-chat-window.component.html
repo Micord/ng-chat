@@ -149,7 +149,7 @@
 
 		<!-- Send Message -->
 		<ng-container *ngIf="chatWindow.newMessage && chatWindow.newMessage.trim()">
-			<a class="btn-add-file" (click)="sendMessage(chatWindow)">
+			<a class="btn-send-message" (click)="sendMessage(chatWindow)">
 				<i class="icon-wrapper" [title]="localization.sendMessageTitle">'>'</i>
 			</a>
 		</ng-container>
