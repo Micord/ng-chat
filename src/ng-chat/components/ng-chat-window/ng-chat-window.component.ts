@@ -257,26 +257,9 @@ export class NgChatWindowComponent {
        switch (event.keyCode)
        {
            case 13:
-               if (!event.ctrlKey)
+               if (event.ctrlKey)
                {
-                 break;
-               }
-               if (window.newMessage && window.newMessage.trim() != "")
-               {
-                   let message = new Message();
-
-                   message.fromId = this.userId;
-                   message.toId = window.participant.id;
-                   message.message = window.newMessage;
-                   message.dateSent = new Date();
-
-                   window.messages.push(message);
-
-                   this.onMessageSent.emit(message);
-
-                   window.newMessage = ""; // Resets the new message input
-
-                   this.scrollChatWindow(window, ScrollDirection.Bottom);
+                 this.sendMessage(window);
                }
                break;
            case 9:
@@ -286,6 +269,27 @@ export class NgChatWindowComponent {
            case 27:
                break;
        }
+    }
+
+    sendMessage(window: ChatWindow): void
+    {
+      if (window.newMessage && window.newMessage.trim() != "")
+      {
+        let message = new Message();
+
+        message.fromId = this.userId;
+        message.toId = window.participant.id;
+        message.message = window.newMessage;
+        message.dateSent = new Date();
+
+        window.messages.push(message);
+
+        this.onMessageSent.emit(message);
+
+        window.newMessage = ""; // Resets the new message input
+
+        this.scrollChatWindow(window, ScrollDirection.Bottom);
+      }
     }
 
     // Toggles a chat window visibility between maximized/minimized

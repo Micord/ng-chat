@@ -111,6 +111,9 @@ export class NgChat implements OnInit, IChatController {
     public searchPlaceholder: string = "Search";
 
     @Input()
+    public sendMessageTitle: string = "Send message";
+
+    @Input()
     public uploadFileTitle: string = "Upload file";
 
     @Input()
@@ -308,6 +311,7 @@ export class NgChat implements OnInit, IChatController {
             this.localization = {
                 messagePlaceholder: this.messagePlaceholder,
                 searchPlaceholder: this.searchPlaceholder,
+                sendMessageTitle: this.sendMessageTitle,
                 uploadFileTitle: this.uploadFileTitle,
                 title: this.title,
                 statusDescription: this.statusDescription,

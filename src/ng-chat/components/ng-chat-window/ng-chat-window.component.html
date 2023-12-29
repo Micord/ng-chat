@@ -147,6 +147,13 @@
 			(focus)="toggleWindowFocus(chatWindow)">
 		</textarea>
 
+		<!-- Send Message -->
+		<ng-container *ngIf="chatWindow.newMessage && chatWindow.newMessage.trim()">
+			<a class="btn-add-file" (click)="sendMessage(chatWindow)">
+				<i class="icon-wrapper" [title]="localization.sendMessageTitle">'>'</i>
+			</a>
+		</ng-container>
+
 		<!-- File Upload -->
 		<ng-container *ngIf="fileUploadAdapter">
 			<a *ngIf="!isUploadingFile(chatWindow)" class="btn-add-file" (click)="triggerNativeFileUpload(chatWindow)">
