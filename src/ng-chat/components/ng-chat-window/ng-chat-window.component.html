@@ -148,9 +148,9 @@
 		</textarea>
 
 		<!-- Send Message -->
-		<ng-container *ngIf="chatWindow.newMessage && chatWindow.newMessage.trim()">
+		<ng-container *ngIf="chatWindow.newMessage">
 			<a class="btn-send-message" (click)="sendMessage(chatWindow)">
-				<i class="icon-wrapper" [title]="localization.sendMessageTitle">'>'</i>
+				<i class="check-icon" [title]="localization.sendMessageTitle"></i>
 			</a>
 		</ng-container>
 
