@@ -6,6 +6,7 @@ export interface Localization
     statusDescription: StatusDescription;
     browserNotificationTitle: string;
     loadMessageHistoryPlaceholder: string;
+    sendMessageTitle: string;
     uploadFileTitle: string;
 }
 

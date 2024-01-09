@@ -248,7 +248,7 @@ export class NgChatWindowComponent {
     }
 
     /*  Monitors pressed keys on a chat window
-        - Dispatches a message when the ENTER key is pressed
+        - Dispatches a message when the CTRL + ENTER keys are pressed
         - Tabs between windows on TAB or SHIFT + TAB
         - Closes the current focused window on ESC
     */
@@ -257,22 +257,9 @@ export class NgChatWindowComponent {
        switch (event.keyCode)
        {
            case 13:
-               if (window.newMessage && window.newMessage.trim() != "")
+               if (event.ctrlKey)
                {
-                   let message = new Message();
-
-                   message.fromId = this.userId;
-                   message.toId = window.participant.id;
-                   message.message = window.newMessage;
-                   message.dateSent = new Date();
-
-                   window.messages.push(message);
-
-                   this.onMessageSent.emit(message);
-
-                   window.newMessage = ""; // Resets the new message input
-
-                   this.scrollChatWindow(window, ScrollDirection.Bottom);
+                 this.sendMessage(window);
                }
                break;
            case 9:
@@ -282,6 +269,27 @@ export class NgChatWindowComponent {
            case 27:
                break;
        }
+    }
+
+    sendMessage(window: ChatWindow): void
+    {
+      if (window.newMessage && window.newMessage.trim() != "")
+      {
+        let message = new Message();
+
+        message.fromId = this.userId;
+        message.toId = window.participant.id;
+        message.message = window.newMessage;
+        message.dateSent = new Date();
+
+        window.messages.push(message);
+
+        this.onMessageSent.emit(message);
+
+        window.newMessage = ""; // Resets the new message input
+
+        this.scrollChatWindow(window, ScrollDirection.Bottom);
+      }
     }
 
     // Toggles a chat window visibility between maximized/minimized
