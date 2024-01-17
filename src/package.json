@@ -1,6 +1,6 @@
 {
   "name": "ng-chat",
-  "version": "3.1.0-micord.4-SNAPSHOT",
+  "version": "3.1.0-micord.4",
   "peerDependencies": {
     "@angular/common": "*",
     "@angular/core": "*",
