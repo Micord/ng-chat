@@ -279,7 +279,7 @@ export class NgChatWindowComponent {
 
         message.fromId = this.userId;
         message.toId = window.participant.id;
-        message.message = window.newMessage;
+        message.message = window.newMessage.replace(/\n/g, '<br/>');
         message.dateSent = new Date();
 
         window.messages.push(message);
