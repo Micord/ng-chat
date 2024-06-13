@@ -1,6 +1,6 @@
 import {
   Component, EventEmitter, Input, HostListener, OnInit, Output, ViewChild, ViewEncapsulation,
-  ChangeDetectorRef
+  ChangeDetectorRef, OnDestroy
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -35,7 +35,7 @@ import { NgChatWindowComponent } from './components/ng-chat-window/ng-chat-windo
     encapsulation: ViewEncapsulation.None
 })
 
-export class NgChat implements OnInit, IChatController {
+export class NgChat implements OnInit, OnDestroy, IChatController {
     constructor(private _httpClient: HttpClient, private cdr: ChangeDetectorRef) { }
 
     // Exposes enums for the ng-template
@@ -213,6 +213,10 @@ export class NgChat implements OnInit, IChatController {
         this.bootstrapChat();
     }
 
+    ngOnDestroy() {
+      window.clearInterval(this.pollingIntervalWindowInstance);
+    }
+
     @HostListener('window:resize', ['$event'])
     onResize(event: any){
        this.viewPortTotalArea = event.target.innerWidth;
@@ -337,6 +341,10 @@ export class NgChat implements OnInit, IChatController {
     // Sends a request to load the participants list
     private fetchParticipantsList(isBootstrapping: boolean): void
     {
+        if (!this.chatAdapter.isSessionActive()) {
+          window.clearInterval(this.pollingIntervalWindowInstance)
+          return;
+        }
         this.chatAdapter.listParticipants()
         .pipe(
             map((participantsResponse: ParticipantResponse[]) => {
