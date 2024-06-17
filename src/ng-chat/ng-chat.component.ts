@@ -287,8 +287,13 @@ export class NgChat implements OnInit, OnDestroy, IChatController {
             if (this.pollParticipantsList){
                 // Setting a long poll interval to update the participants list
                 this.pollingIntervalWindowInstance = window
-                  .setInterval(() =>
-                                 this.fetchParticipantsList(false), this.pollingInterval);
+                  .setInterval(() => {
+                    if (!this.chatAdapter.isSessionActive()) {
+                      window.clearInterval(this.pollingIntervalWindowInstance);
+                      return;
+                    }
+                    this.fetchParticipantsList(false)
+                  }, this.pollingInterval);
             }
             // Since polling was disabled, a participants list update mechanism will have
             // to be implemented in the ChatAdapter.
@@ -341,10 +346,6 @@ export class NgChat implements OnInit, OnDestroy, IChatController {
     // Sends a request to load the participants list
     private fetchParticipantsList(isBootstrapping: boolean): void
     {
-        if (!this.chatAdapter.isSessionActive()) {
-          window.clearInterval(this.pollingIntervalWindowInstance)
-          return;
-        }
         this.chatAdapter.listParticipants()
         .pipe(
             map((participantsResponse: ParticipantResponse[]) => {
