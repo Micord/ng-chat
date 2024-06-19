@@ -1,25 +1,25 @@
-
-import { IChatParticipant } from './../../ng-chat/core/chat-participant';
-import { LinkfyPipe } from './../../ng-chat/pipes/linkfy.pipe';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
-import { NgChatWindowComponent } from '../../ng-chat/components/ng-chat-window/ng-chat-window.component';
-import { User } from '../../ng-chat/core/user';
-import { Window } from '../../ng-chat/core/window';
 import { Observable, of } from 'rxjs';
+import { NgChatWindowComponent } from '../../ng-chat/components/ng-chat-window/ng-chat-window.component';
+import { Chat } from '../../ng-chat/core/chat';
+import { IChatParticipant } from '../../ng-chat/core/chat-participant';
+import { ChatParticipantStatus } from '../../ng-chat/core/chat-participant-status.enum';
+import { ChatUser } from '../../ng-chat/core/chat-user';
+import { ChatWindow } from '../../ng-chat/core/chat-window';
+import { FileMessage } from '../../ng-chat/core/file-message';
+import { IFileUploadAdapter } from '../../ng-chat/core/file-upload-adapter';
+import { Localization, StatusDescription } from '../../ng-chat/core/localization';
 import { Message } from '../../ng-chat/core/message';
 import { ScrollDirection } from '../../ng-chat/core/scroll-direction.enum';
-import { IFileUploadAdapter } from '../../ng-chat/core/file-upload-adapter';
-import { FileMessage } from '../../ng-chat/core/file-message';
-import { ChatParticipantType } from '../../ng-chat/core/chat-participant-type.enum';
-import { Group } from '../../ng-chat/core/group';
-import { By } from '@angular/platform-browser';
 import { EmojifyPipe } from '../../ng-chat/pipes/emojify.pipe';
-import { ChatParticipantStatus } from '../../ng-chat/core/chat-participant-status.enum';
-import { Localization, StatusDescription } from './../../ng-chat/core/localization';
+import { LinkfyPipe } from '../../ng-chat/pipes/linkfy.pipe';
 
 class MockableFileUploadAdapter implements IFileUploadAdapter {
-    uploadFile(file: File, userTo: User): Observable<Message> {
+    downloadFile(message: Message): void {
+    }
+    uploadFile(file: File, userTo: ChatUser): Observable<Message> {
         throw new Error("Method not implemented.");
     }
 }
@@ -44,12 +44,10 @@ describe('NgChatWindowComponent', () => {
 	it('Must invoke onMessagesSeen event when a chat group window gets focus', () => {
         const spy = spyOn(subject.onMessagesSeen, 'emit');
 
-        const user: User = {
-            participantType: ChatParticipantType.Group,
+        const user: ChatUser = {
             id: 888,
             displayName: 'Test user group',
             status: 1,
-            avatar: ''
         };
 
         const messages: Message[] = [
@@ -66,7 +64,7 @@ describe('NgChatWindowComponent', () => {
             }
         ];
 
-        const window: Window = new Window(user, false, false);
+        const window: ChatWindow = new ChatWindow(user, false, false);
         window.messages = messages;
 
         subject.toggleWindowFocus(window);
@@ -82,12 +80,10 @@ describe('NgChatWindowComponent', () => {
 
         let spy = spyOn(subject.onMessagesSeen, 'emit');
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         let messages: Message[] = [
@@ -104,7 +100,7 @@ describe('NgChatWindowComponent', () => {
             }
         ];
 
-        let window: Window = new Window(user, false, false);
+        let window: ChatWindow = new ChatWindow(user, false, false);
         window.messages = messages;
 
         subject.toggleWindowFocus(window);
@@ -115,14 +111,14 @@ describe('NgChatWindowComponent', () => {
     });
 
 	it('Must send a new message when the ENTER key is pressed', () => {
-        const chattingToUser = new User();
+        const chattingToUser = new ChatUser();
         const event = {
             keyCode: 13
         };
 
         chattingToUser.id = 99;
 
-        const currentWindow = new Window(chattingToUser, false, false);
+        const currentWindow = new ChatWindow(chattingToUser, false, false);
 
         currentWindow.newMessage = "Test";
 
@@ -140,14 +136,14 @@ describe('NgChatWindowComponent', () => {
     });
 
 	it('Must not send a new message when the ENTER key is pressed but the message input is empty', () => {
-        let chattingToUser = new User();
+        let chattingToUser = new ChatUser();
         let event = {
             keyCode: 13
         };
 
         chattingToUser.id = 99;
 
-        let currentWindow = new Window(chattingToUser, false, false);
+        let currentWindow = new ChatWindow(chattingToUser, false, false);
 
         currentWindow.newMessage = "";
 
@@ -160,30 +156,13 @@ describe('NgChatWindowComponent', () => {
         expect(subject.scrollChatWindow).not.toHaveBeenCalled();
     });
 
-	it('Must close the current window when the ESC key is pressed', () => {
-        const currentWindow = new Window(null, false, false);
-        const event = {
-            keyCode: 27
-        };
-
-        const chatWindowClosedSpy = spyOn(subject.onChatWindowClosed, 'emit');
-
-        subject.onChatInputTyped(event, currentWindow);
-
-        expect(chatWindowClosedSpy).toHaveBeenCalledTimes(1);
-        expect(chatWindowClosedSpy.calls.mostRecent().args[0]).not.toBeNull();
-        expect(chatWindowClosedSpy.calls.mostRecent().args[0].closedWindow).toBe(currentWindow);
-	});
-
 	it('Must not invoke onMessagesSeen event when a window gets focus but there are no new messages', () => {
         spyOn(subject.onMessagesSeen, 'emit');
 
-        let user: User = {
-            participantType: ChatParticipantType.User,
+        let user: ChatUser = {
             id: 999,
             displayName: 'Test user',
             status: 1,
-            avatar: ''
         };
 
         // Both messages have "dateSeen" dates
@@ -202,7 +181,7 @@ describe('NgChatWindowComponent', () => {
             }
         ];
 
-        let window: Window = new Window(user, false, false);
+        let window: ChatWindow = new ChatWindow(user, false, false);
         window.messages = messages;
 
         subject.toggleWindowFocus(window);
@@ -213,10 +192,10 @@ describe('NgChatWindowComponent', () => {
 	it('Should filter by file instance id and upload file when a file upload "onFileChosen" event is triggered', () => {
         const mockedFileMessageServerResponse = new FileMessage();
 
-        const chattingTo = new User();
+        const chattingTo = new ChatUser();
         chattingTo.id = 88;
 
-        const chatWindow = new Window(chattingTo, false, false);
+        const chatWindow = new ChatWindow(chattingTo, false, false);
 
         spyOn(MockableFileUploadAdapter.prototype, 'uploadFile').and.callFake(() => {
             // At this stage the 'isUploadingFile' should be true
@@ -257,7 +236,7 @@ describe('NgChatWindowComponent', () => {
         expect(MockableFileUploadAdapter.prototype.uploadFile).toHaveBeenCalledTimes(1);
         expect(MockableFileUploadAdapter.prototype.uploadFile).toHaveBeenCalledWith(fakeFile, chatWindow.participant.id);
 
-		expect(messageSentSpy).toHaveBeenCalledTimes(1);
+        expect(messageSentSpy).toHaveBeenCalledTimes(1);
         expect(messageSentSpy.calls.mostRecent().args[0]).toBe(mockedFileMessageServerResponse);
 
         expect(mockedFileMessageServerResponse.fromId).toBe(subject.userId);
@@ -269,40 +248,24 @@ describe('NgChatWindowComponent', () => {
     });
 
     it('Must return default chat options exercise', () => {
-        let chattingTo = new User();
-        let currentWindow = new Window(chattingTo, false, false);
-
-        subject.showOptions = true;
+        let chattingTo = new ChatUser();
+        let currentWindow = new ChatWindow(chattingTo, false, false);
 
         let result = subject.defaultWindowOptions(currentWindow);
 
         expect(result).not.toBeNull();
         expect(result.length).toBeGreaterThanOrEqual(1);
-        expect(result[0].displayLabel).toBe("Add People");
+        expect(result[0].displayLabel).toBe("Delete messages");
         expect(result[0].action).not.toBeNull();
-        expect(result[0].validateContext).not.toBeNull();
+        expect(result[0].validateParticipantContext).not.toBeNull();
 
-        expect(result[0].validateContext(chattingTo)).toBeTruthy();
-        expect(result[0].validateContext(new Group([]))).toBeFalsy();
+        expect(result[0].validateParticipantContext(chattingTo)).toBeTruthy();
+        expect(result[0].validateParticipantContext(new Chat())).toBeFalsy();
     });
 
     it('Must return empty chat options when participant is not an user', () => {
-        let chattingTo = new Group([]);
-        let currentWindow = new Window(chattingTo, false, false);
-
-        subject.showOptions = true;
-
-        let result = subject.defaultWindowOptions(currentWindow);
-
-        expect(result).not.toBeNull();
-        expect(result.length).toBe(0);
-    });
-
-    it('Must return empty chat options when showOptions is set to false', () => {
-        let chattingTo = new User();
-        let currentWindow = new Window(chattingTo, false, false);
-
-        subject.showOptions = false;
+        let chattingTo = new Chat();
+        let currentWindow = new ChatWindow(chattingTo, false, false);
 
         let result = subject.defaultWindowOptions(currentWindow);
 
@@ -313,15 +276,13 @@ describe('NgChatWindowComponent', () => {
     it('Must emit onLoadHistoryTriggered when fetchMessageHistory is invoked', () => {
         const spy = spyOn(subject.onLoadHistoryTriggered, 'emit');
 
-        const user: User = {
-            participantType: ChatParticipantType.Group,
+        const user: ChatUser = {
             id: 888,
             displayName: 'Test user group',
             status: 1,
-            avatar: ''
         };
 
-        const window: Window = new Window(user, false, false);
+        const window: ChatWindow = new ChatWindow(user, false, false);
 
         subject.fetchMessageHistory(window);
 
@@ -334,15 +295,13 @@ describe('NgChatWindowComponent', () => {
     it('Avatar should not be displayed for messages sent by the current user', () => {
         subject.userId = 1;
 
-        const user: User = {
-            participantType: ChatParticipantType.User,
+        const user: ChatUser = {
             id: subject.userId,
             displayName: 'Test User',
             status: 1,
-            avatar: ''
         };
 
-        const window: Window = new Window(user, false, false);
+        const window: ChatWindow = new ChatWindow(user, false, false);
 
         const message: Message = {
             fromId: user.id,
@@ -350,7 +309,7 @@ describe('NgChatWindowComponent', () => {
             message: 'Test'
         };
 
-        const isVisible = subject.isAvatarVisible(window, message, 0);
+        const isVisible = subject.isAuthorNameVisible(window, message, 0);
 
         expect(isVisible).toBeFalse();
     });
@@ -358,15 +317,13 @@ describe('NgChatWindowComponent', () => {
     it('Avatar should be displayed for first messages sent by another user', () => {
         subject.userId = 1;
 
-        const user: User = {
-            participantType: ChatParticipantType.User,
+        const user: ChatUser = {
             id: 123,
             displayName: 'Test User',
             status: 1,
-            avatar: ''
         };
 
-        const window: Window = new Window(user, false, false);
+        const window: ChatWindow = new ChatWindow(user, false, false);
 
         const message: Message = {
             fromId: user.id,
@@ -374,20 +331,18 @@ describe('NgChatWindowComponent', () => {
             message: 'Test'
         };
 
-        const isVisible = subject.isAvatarVisible(window, message, 0);
+        const isVisible = subject.isAuthorNameVisible(window, message, 0);
 
         expect(isVisible).toBeTrue();
     });
 
-    it('Avatar should be displayed for messages sent by another user if previous message wasnt from him', () => {
+    it('Avatar should be displayed for messages sent by another user if previous message wasn\'t from him', () => {
         subject.userId = 1;
 
-        const user: User = {
-            participantType: ChatParticipantType.User,
+        const user: ChatUser = {
             id: 123,
             displayName: 'Test User',
             status: 1,
-            avatar: ''
         };
 
         const previousMessage: Message = {
@@ -402,11 +357,11 @@ describe('NgChatWindowComponent', () => {
             message: 'Test'
         };
 
-        const window: Window = new Window(user, false, false);
+        const window: ChatWindow = new ChatWindow(user, false, false);
 
         window.messages.push(previousMessage)
 
-        const isVisible = subject.isAvatarVisible(window, message, 1);
+        const isVisible = subject.isAuthorNameVisible(window, message, 1);
 
         expect(isVisible).toBeTrue();
     });
@@ -414,12 +369,10 @@ describe('NgChatWindowComponent', () => {
     it('Avatar should not be displayed for messages sent by another user if they are stacked', () => {
         subject.userId = 1;
 
-        const user: User = {
-            participantType: ChatParticipantType.User,
+        const user: ChatUser = {
             id: 123,
             displayName: 'Test User',
             status: 1,
-            avatar: ''
         };
 
         const previousMessage: Message = {
@@ -434,68 +387,13 @@ describe('NgChatWindowComponent', () => {
             message: 'Test'
         };
 
-        const window: Window = new Window(user, false, false);
+        const window: ChatWindow = new ChatWindow(user, false, false);
 
         window.messages.push(previousMessage)
 
-        const isVisible = subject.isAvatarVisible(window, message, 1);
+        const isVisible = subject.isAuthorNameVisible(window, message, 1);
 
         expect(isVisible).toBeFalse();
-    });
-
-    it('getChatWindowAvatar must return a users avatar when requested', () => {
-        subject.userId = 1;
-        const testAvatar = 'test';
-
-        const user: User = {
-            participantType: ChatParticipantType.User,
-            id: 123,
-            displayName: 'Test User',
-            status: 1,
-            avatar: testAvatar
-        };
-
-        const message: Message = {
-            fromId: user.id,
-            toId: subject.userId,
-            message: 'Test'
-        };
-
-        const returnedAvatar = subject.getChatWindowAvatar(user, message);
-
-        expect(returnedAvatar).toBe(testAvatar);
-    });
-
-    it('getChatWindowAvatar must return a users avatar from a group when requested', () => {
-        subject.userId = 1;
-        const testAvatar = 'test';
-
-        const user: User = {
-            participantType: ChatParticipantType.User,
-            id: 123,
-            displayName: 'Test User',
-            status: 1,
-            avatar: testAvatar
-        };
-
-        const group: Group = {
-            participantType: ChatParticipantType.Group,
-            chattingTo: [user],
-            displayName: 'Test User Group',
-            status: 1,
-            id: '1',
-            avatar: ''
-        };
-
-        const message: Message = {
-            fromId: user.id,
-            toId: subject.userId,
-            message: 'Test'
-        };
-
-        const returnedAvatar = subject.getChatWindowAvatar(group, message);
-
-        expect(returnedAvatar).toBe(testAvatar);
     });
 
     it('An image message must be rendered ', () => {
@@ -505,7 +403,7 @@ describe('NgChatWindowComponent', () => {
             away: 'Away',
             offline: 'Offline'
         };
-    
+
         const localizationStub: Localization = {
             statusDescription: statusDescriptionTestValues,
             title: 'title',
@@ -520,10 +418,8 @@ describe('NgChatWindowComponent', () => {
         };
 
         const chattingToUser: IChatParticipant = {
-            participantType: ChatParticipantType.User,
             id: '1',
             status: ChatParticipantStatus.Online,
-            avatar: null,
             displayName: 'name'
         };
         const imgUrl = 'https://66.media.tumblr.com/avatar_9dd9bb497b75_128.pnj';
@@ -533,12 +429,12 @@ describe('NgChatWindowComponent', () => {
             message:  imgUrl,
             type: 3
         }
-        const currentWindow = new Window(chattingToUser, false, false);
+        const currentWindow = new ChatWindow(chattingToUser, false, false);
 
         subject.chatParticipantStatusDescriptor = chatParticipantStatusDescriptor
         subject.localization = localizationStub;
 
-        subject.window = currentWindow
+        subject.chatWindow = currentWindow
         currentWindow.messages.push(message);
 
         fixture.detectChanges();

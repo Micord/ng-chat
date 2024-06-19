@@ -1,5 +1,6 @@
 /* Dropdown Button */
-.ng-chat-options-activator {
+.ng-chat-options-activator
+{
     background-color: unset;
     color: white;
     line-height: 28px;

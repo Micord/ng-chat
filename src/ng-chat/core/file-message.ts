@@ -1,15 +1,9 @@
-import { Message } from './message';
-import { MessageType } from './message-type.enum';
+import { Attachment } from "./attachment";
+import { Message } from "./message";
+import { MessageType } from "./message-type.enum";
 
 export class FileMessage extends Message
 {
-    constructor() {
-        super();
-        
-        this.type = MessageType.File;
-    }
-
-    public downloadUrl: string;
-    public mimeType: string;
-    public fileSizeInBytes: number = 0;
+    readonly type = MessageType.File;
+    readonly file = new Attachment();
 }

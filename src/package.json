@@ -1,6 +1,6 @@
 {
   "name": "ng-chat",
-  "version": "3.1.0",
+  "version": "3.1.0-micord.5",
   "peerDependencies": {
     "@angular/common": "*",
     "@angular/core": "*",
@@ -39,16 +39,16 @@
     "build-package": "ng-packagr -p package.json && npm run copy-readme"
   },
   "description": "A simple facebook/linkedin lookalike chat module for Angular applications.",
-  "author": "Rafael Carvalho",
+  "author": "Micord fork",
   "license": "MIT",
-  "homepage": "https://github.com/rpaschoal/ng-chat",
-  "bugs": {
-    "url": "https://github.com/rpaschoal/ng-chat/issues"
-  },
+  "homepage": "https://github.com/Micord/ng-chat",
   "ngPackage": {
     "lib": {
       "entryFile": "index.ts"
     }
   },
-  "dependencies": {}
+  "dependencies": {},
+  "publishConfig": {
+    "registry": "https://repo.micord.ru/repository/npm-private/"
+  }
 }

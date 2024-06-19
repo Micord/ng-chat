@@ -27,7 +27,7 @@ $text-color: #5C5C5C;
     {
         @extend %text-definition;
     }
-    .friends-search-bar
+    .participants-search-bar
     {
         background-color: $primary-color;
     }
@@ -42,7 +42,7 @@ $text-color: #5C5C5C;
     }
     .chat-window-input
     {
-        background-color: $primary-color;   
+        background-color: $primary-color;
     }
     .sent-chat-message-container,  .file-message-container
     {

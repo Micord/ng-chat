@@ -1,22 +1,22 @@
 import { Component, Input, Output, EventEmitter, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
 
-import { Localization } from '../../core/localization';
 import { IChatOption } from '../../core/chat-option';
-import { ChatParticipantStatus } from "../../core/chat-participant-status.enum";
 import { IChatParticipant } from "../../core/chat-participant";
-import { User } from "../../core/user";
-import { Window } from "../../core/window";
-import { ParticipantResponse } from "../../core/participant-response";
-import { MessageCounter } from "../../core/message-counter";
+import { ChatParticipantStatus } from "../../core/chat-participant-status.enum";
 import { chatParticipantStatusDescriptor } from '../../core/chat-participant-status-descriptor';
+import { ChatUser } from "../../core/chat-user";
+import { ChatWindow } from "../../core/chat-window";
+import { Localization } from '../../core/localization';
+import { MessageCounter } from "../../core/message-counter";
+import { ParticipantResponse } from "../../core/participant-response";
 
 @Component({
-    selector: 'ng-chat-friends-list',
-    templateUrl: './ng-chat-friends-list.component.html',
-    styleUrls: ['./ng-chat-friends-list.component.css'],
+    selector: 'ng-chat-participants',
+    templateUrl: './ng-chat-participants.component.html',
+    styleUrls: ['./ng-chat-participants.component.css'],
     encapsulation: ViewEncapsulation.None
 })
-export class NgChatFriendsListComponent implements OnChanges {
+export class NgChatParticipantsComponent implements OnChanges {
     constructor() { }
 
     @Input()
@@ -29,16 +29,13 @@ export class NgChatFriendsListComponent implements OnChanges {
     public participantsInteractedWith: IChatParticipant[] = [];
 
     @Input()
-    public windows: Window[];
+    public window: ChatWindow;
 
     @Input()
     public userId: any;
 
     @Input()
     public localization: Localization;
-
-    @Input()
-    public shouldDisplay: boolean;
 
     @Input()
     public isCollapsed: boolean;
@@ -58,7 +55,7 @@ export class NgChatFriendsListComponent implements OnChanges {
     @Output()
     public onOptionPromptConfirmed: EventEmitter<any> = new EventEmitter();
 
-    public selectedUsersFromFriendsList: User[] = [];
+    public selectedUsersFromParticipantsList: ChatUser[] = [];
 
     public searchInput: string = '';
 
@@ -69,10 +66,11 @@ export class NgChatFriendsListComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         if (this.currentActiveOption) {
             const currentOptionTriggeredBy = this.currentActiveOption && this.currentActiveOption.chattingTo.participant.id;
-            const isActivatedUserInSelectedList = (this.selectedUsersFromFriendsList.filter(item => item.id == currentOptionTriggeredBy)).length > 0;
+            const isActivatedUserInSelectedList = (this.selectedUsersFromParticipantsList.filter(item => item.id == currentOptionTriggeredBy)).length > 0;
 
             if (!isActivatedUserInSelectedList) {
-                this.selectedUsersFromFriendsList = this.selectedUsersFromFriendsList.concat(this.currentActiveOption.chattingTo.participant as User);
+                this.selectedUsersFromParticipantsList = this.selectedUsersFromParticipantsList
+                  .concat(this.currentActiveOption.chattingTo.participant as ChatUser);
             }
         }
     }
@@ -80,21 +78,21 @@ export class NgChatFriendsListComponent implements OnChanges {
     get filteredParticipants(): IChatParticipant[]
     {
         if (this.searchInput.length > 0){
-            // Searches in the friend list by the inputted search string
+            // Searches in the participant list by the inputted search string
             return this.participants.filter(x => x.displayName.toUpperCase().includes(this.searchInput.toUpperCase()));
         }
 
         return this.participants;
     }
 
-    isUserSelectedFromFriendsList(user: User) : boolean
+    isUserSelectedFromParticipantsList(user: ChatUser) : boolean
     {
-        return (this.selectedUsersFromFriendsList.filter(item => item.id == user.id)).length > 0
+        return (this.selectedUsersFromParticipantsList.filter(item => item.id == user.id)).length > 0
     }
 
     unreadMessagesTotalByParticipant(participant: IChatParticipant): string
     {
-        let openedWindow = this.windows.find(x => x.participant.id == participant.id);
+        let openedWindow = this.window;
 
         if (openedWindow){
             return MessageCounter.unreadMessagesTotal(openedWindow, this.userId);
@@ -102,7 +100,12 @@ export class NgChatFriendsListComponent implements OnChanges {
         else
         {
             let totalUnreadMessages = this.participantsResponse
-                .filter(x => x.participant.id == participant.id && !this.participantsInteractedWith.find(u => u.id == participant.id) && x.metadata && x.metadata.totalUnreadMessages > 0)
+                .filter(participantResponse =>
+                          participantResponse.participant.id == participant.id
+                          && !this.participantsInteractedWith.find(u => u.id == participant.id)
+                          && participantResponse.metadata
+                          && participantResponse.metadata.totalUnreadMessages > 0
+                )
                 .map((participantResponse) => {
                     return participantResponse.metadata.totalUnreadMessages
                 })[0];
@@ -111,39 +114,39 @@ export class NgChatFriendsListComponent implements OnChanges {
         }
     }
 
-    cleanUpUserSelection = () => this.selectedUsersFromFriendsList = [];
+    cleanUpUserSelection = () => this.selectedUsersFromParticipantsList = [];
 
-    // Toggle friends list visibility
+    // Toggle participants list visibility
     onChatTitleClicked(): void
     {
         this.isCollapsed = !this.isCollapsed;
     }
 
-    onFriendsListCheckboxChange(selectedUser: User, isChecked: boolean): void
+    onParticipantsListCheckboxChange(selectedUser: ChatUser, isChecked: boolean): void
     {
         if(isChecked) {
-            this.selectedUsersFromFriendsList.push(selectedUser);
-        } 
-        else 
+            this.selectedUsersFromParticipantsList.push(selectedUser);
+        }
+        else
         {
-            this.selectedUsersFromFriendsList.splice(this.selectedUsersFromFriendsList.indexOf(selectedUser), 1);
+            this.selectedUsersFromParticipantsList.splice(this.selectedUsersFromParticipantsList.indexOf(selectedUser), 1);
         }
     }
 
-    onUserClick(clickedUser: User): void
+    onUserClick(clickedUser: ChatUser): void
     {
         this.onParticipantClicked.emit(clickedUser);
     }
 
-    onFriendsListActionCancelClicked(): void
+    onParticipantsListActionCancelClicked(): void
     {
         this.onOptionPromptCanceled.emit();
         this.cleanUpUserSelection();
     }
 
-    onFriendsListActionConfirmClicked() : void
+    onParticipantsListActionConfirmClicked() : void
     {
-        this.onOptionPromptConfirmed.emit(this.selectedUsersFromFriendsList);
+        this.onOptionPromptConfirmed.emit(this.selectedUsersFromParticipantsList);
         this.cleanUpUserSelection();
     }
 }

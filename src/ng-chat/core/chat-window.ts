@@ -1,11 +1,7 @@
-import { Message } from "./message";
-import { User } from "./user";
-import { ChatParticipantType } from "./chat-participant-type.enum";
-import { ChatParticipantStatus } from "./chat-participant-status.enum";
-import { Group } from "./group";
 import { IChatParticipant } from "./chat-participant";
+import { Message } from "./message";
 
-export class Window
+export class ChatWindow
 {
     constructor(participant: IChatParticipant, isLoadingHistory: boolean, isCollapsed: boolean)
     {
@@ -18,12 +14,12 @@ export class Window
         this.historyPage = 0;
     }
 
-    public participant: IChatParticipant;    
+    public participant: IChatParticipant;
     public messages: Message[] = [];
     public newMessage?: string = "";
 
     // UI Behavior properties
-    public isCollapsed?: boolean = false; 
+    public isCollapsed?: boolean = false;
     public isLoadingHistory: boolean = false;
     public hasFocus: boolean = false;
     public hasMoreMessages: boolean = true;
