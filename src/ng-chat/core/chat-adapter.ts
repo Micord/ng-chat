@@ -13,6 +13,8 @@ export abstract class ChatAdapter
 
     public abstract sendMessage(message: Message): void;
 
+    public abstract isSessionActive(): boolean;
+
     public abstract deleteMessages(messages: Message[]): Promise<void>;
 
     // ### Adapter/Chat income/ingress events ###

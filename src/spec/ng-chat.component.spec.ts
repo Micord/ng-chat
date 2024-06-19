@@ -20,6 +20,9 @@ class MockableAdapter extends ChatAdapter {
     public sendMessage(message: Message): void {
         throw new Error("Method not implemented.");
     }
+    public isSessionActive(): boolean {
+      throw new Error("Method not implemented.");
+    }
 }
 
 class MockableHTMLAudioElement {
