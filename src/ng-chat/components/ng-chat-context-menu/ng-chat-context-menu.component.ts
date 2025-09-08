@@ -3,7 +3,8 @@ import { Component, EventEmitter, Output } from "@angular/core";
 @Component({
     selector: 'ng-chat-context-menu',
     templateUrl: './ng-chat-context-menu.component.html',
-    styleUrls: ['./ng-chat-context-menu.component.css']
+    styleUrls: ['./ng-chat-context-menu.component.css'],
+    standalone: false
 })
 export class NgChatContextMenuComponent {
   constructor() { }

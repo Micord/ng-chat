@@ -32,7 +32,8 @@ import { NgChatWindowComponent } from './components/ng-chat-window/ng-chat-windo
         'assets/themes/ng-chat.theme.default.scss',
         'assets/themes/ng-chat.theme.dark.scss'
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 
 export class NgChat implements OnInit, OnDestroy, IChatController {

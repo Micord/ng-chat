@@ -4,6 +4,8 @@ import { NgChatOptionsComponent } from '../../ng-chat/components/ng-chat-options
 import { IChatOption } from '../../ng-chat/core/chat-option';
 import { IChatParticipant } from '../../ng-chat/core/chat-participant';
 import { ChatWindow } from '../../ng-chat/core/chat-window';
+import {ChatOptionType} from "../../ng-chat/core/chat-option-type.enum";
+import {Message} from "../../ng-chat/core/message";
 
 describe('NgChatOptionsComponent', () => {
 	let component: NgChatOptionsComponent;
@@ -35,7 +37,9 @@ describe('NgChatOptionsComponent', () => {
 				actionInvoked = true;
 				actionInvokedArgument = participant;
 			},
-			displayLabel: "Test Option"
+			displayLabel: "Test Option",
+      type: ChatOptionType.Message,
+      validateMessageContext:  (message: Message) => true
 		}
 
 		component.onOptionClicked(option);
@@ -56,7 +60,9 @@ describe('NgChatOptionsComponent', () => {
 			chattingTo: mockedWindow,
 			action: null,
 			validateParticipantContext: null,
-			displayLabel: "Test Option"
+			displayLabel: "Test Option",
+      type: ChatOptionType.Message,
+      validateMessageContext:  (message: Message) => true
 		}
 
 		component.onOptionClicked(option);

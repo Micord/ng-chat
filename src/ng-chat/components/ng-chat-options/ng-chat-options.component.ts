@@ -4,7 +4,8 @@ import { IChatOption } from '../../core/chat-option';
 @Component({
     selector: 'ng-chat-options',
     templateUrl: './ng-chat-options.component.html',
-    styleUrls: ['./ng-chat-options.component.css']
+    styleUrls: ['./ng-chat-options.component.css'],
+    standalone: false
 })
 export class NgChatOptionsComponent {
 	constructor() { }

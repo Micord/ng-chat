@@ -1,47 +1,45 @@
 {
   "name": "ng-chat",
-  "version": "3.1.0-micord.5",
-  "peerDependencies": {
-    "@angular/common": "*",
-    "@angular/core": "*",
-    "@angular/forms": "*",
-    "rxjs": "*"
-  },
-  "devDependencies": {
-    "@angular-devkit/build-angular": "^12.0.5",
-    "@angular/common": "^12.0.5",
-    "@angular/compiler": "^12.0.5",
-    "@angular/compiler-cli": "^12.0.5",
-    "@angular/core": "^12.0.5",
-    "@angular/forms": "^12.0.5",
-    "@angular/platform-browser": "^12.0.5",
-    "gulp": "~4.0.2",
-    "gulp-inline-ng2-template": "^5.0.1",
-    "ng-packagr": "^12.0.6",
-    "rollup": "^2.52.1",
-    "rxjs": "^7.1.0",
-    "tsickle": "^0.43.0",
-    "typescript": "~4.2.4",
-    "uglify-js": "^3.13.9",
-    "zone.js": "^0.11.4"
-  },
-  "scripts": {
-    "templates": "gulp inline-templates",
-    "transpile": "ngc",
-    "package": "rollup -c",
-    "minify": "uglifyjs dist/bundles/ng-chat.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/ng-chat.umd.min.js",
-    "clean": "del /S *.ngsummary.json del /S *.ngfactory.ts",
-    "linux-clean": "rm -f *.ngsummary.json *.ngfactory.ts",
-    "build-legacy": "npm run templates && npm run transpile && npm run package && npm run minify && npm run clean",
-    "linux-build-legacy": "npm run templates && npm run transpile && npm run package && npm run minify && npm run linux-clean",
-    "copy-readme": "copy ..\\README.md dist\\README.md",
-    "build": "ng-packagr -p package.json",
-    "build-package": "ng-packagr -p package.json && npm run copy-readme"
-  },
+  "version": "3.1.0-micord.6",
   "description": "A simple facebook/linkedin lookalike chat module for Angular applications.",
   "author": "Micord fork",
   "license": "MIT",
   "homepage": "https://github.com/Micord/ng-chat",
+  "scripts": {
+    "copy-readme": "copy ..\\README.md dist\\README.md",
+    "build": "ng build && npm run copy-readme"
+  },
+  "peerDependencies": {
+    "rxjs": "*"
+  },
+  "devDependencies": {
+    "@angular/cli": "19.2.15",
+    "@angular/language-service": "19.2.14",
+    "@angular-devkit/build-angular": "19.2.15",
+    "@angular/common": "19.2.14",
+    "@angular/compiler": "19.2.14",
+    "@angular/compiler-cli": "19.2.14",
+    "@angular/core": "19.2.14",
+    "@angular/forms": "19.2.14",
+    "@angular/platform-browser": "19.2.14",
+    "@types/jasmine": "5.1.9",
+    "@types/jasminewd2": "2.0.13",
+    "@types/node": "22.13.14",
+    "codelyzer": "6.0.2",
+    "jasmine-core": "5.10.0",
+    "jasmine-spec-reporter": "7.0.0",
+    "karma": "6.4.4",
+    "karma-chrome-launcher": "3.2.0",
+    "karma-coverage-istanbul-reporter": "3.0.3",
+    "karma-jasmine": "5.1.0",
+    "karma-jasmine-html-reporter": "2.1.0",
+    "ng-packagr": "19.2.2",
+    "protractor": "7.0.0",
+    "tslint": "6.1.3",
+    "rxjs": "7.8.2",
+    "typescript": "5.8.3",
+    "zone.js": "0.15.1"
+  },
   "ngPackage": {
     "lib": {
       "entryFile": "index.ts"

@@ -14,7 +14,8 @@ import { ParticipantResponse } from "../../core/participant-response";
     selector: 'ng-chat-participants',
     templateUrl: './ng-chat-participants.component.html',
     styleUrls: ['./ng-chat-participants.component.css'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class NgChatParticipantsComponent implements OnChanges {
     constructor() { }

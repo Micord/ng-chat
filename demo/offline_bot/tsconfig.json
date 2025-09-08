@@ -1,13 +1,13 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "downlevelIteration": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
+    "esModuleInterop": true,
     "declaration": false,
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "target": "es2015",
+    "target": "es2022",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -15,13 +15,11 @@
       "es2017",
       "dom"
     ],
-    "module": "es2020",
+    "module": "es2022",
     "baseUrl": "./"
   },
   "include": [
     "src/**/*",
-    "node_modules/ng-chat/*.ts",
-    "node_modules/ng-chat/ng-chat/**/*.ts"
   ],
   "exclude": [
     "**/*.spec.ts"

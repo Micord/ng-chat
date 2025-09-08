@@ -14,7 +14,7 @@ class MockableAdapter extends ChatAdapter {
     public listParticipants(): Observable<ParticipantResponse[]> {
         throw new Error("Method not implemented.");
     }
-    public getMessageHistory(destinataryId: any): Observable<Message[]> {
+    public getMessageHistory(): Observable<Message[]> {
         throw new Error("Method not implemented.");
     }
     public sendMessage(message: Message): void {
@@ -23,6 +23,10 @@ class MockableAdapter extends ChatAdapter {
     public isSessionActive(): boolean {
       throw new Error("Method not implemented.");
     }
+
+  deleteMessages(messages: Message[]): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 }
 
 class MockableHTMLAudioElement {
@@ -35,7 +39,7 @@ let subject: any = null;
 
 describe('NgChat', () => {
     beforeEach(() => {
-        subject = new NgChat(null); // HttpClient related methods are tested elsewhere
+        subject = new NgChat(null,null); // HttpClient related methods are tested elsewhere
         subject.userId = 123;
         subject.adapter = new MockableAdapter();
         subject.audioFile = new MockableHTMLAudioElement();

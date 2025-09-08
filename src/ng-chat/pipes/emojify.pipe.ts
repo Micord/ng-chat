@@ -21,7 +21,10 @@ let emojiDictionary = [
 /*
  * Transforms common emoji text to UTF encoded emojis
 */
-@Pipe({name: 'emojify'})
+@Pipe({
+    name: 'emojify',
+    standalone: false
+})
 export class EmojifyPipe implements PipeTransform {
     transform(message: string, pipeEnabled: boolean): string {
         if (pipeEnabled && message && message.length > 1) {  

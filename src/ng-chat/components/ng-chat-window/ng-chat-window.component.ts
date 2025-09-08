@@ -17,7 +17,8 @@ import { chatParticipantStatusDescriptor } from '../../core/chat-participant-sta
     selector: 'ng-chat-window',
     templateUrl: './ng-chat-window.component.html',
     styleUrls: ['./ng-chat-window.component.css'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class NgChatWindowComponent {
     constructor() { }

@@ -15,4 +15,5 @@ export * from './ng-chat/core/chat-participant';
 export * from './ng-chat/core/message-type.enum';
 export * from './ng-chat/core/file-upload-adapter';
 
+export {NgChat} from './ng-chat/ng-chat.component';
 export { NgChatModule } from './ng-chat/ng-chat.module';

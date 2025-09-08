@@ -410,7 +410,9 @@ describe('NgChatWindowComponent', () => {
             messagePlaceholder: 'messagePlaceholder',
             searchPlaceholder: 'searchPlaceholder',
             browserNotificationTitle: 'browserNotificationTitle',
-            loadMessageHistoryPlaceholder: 'loadMessageHistoryPlaceholder'
+            loadMessageHistoryPlaceholder: 'loadMessageHistoryPlaceholder',
+            sendMessageTitle: 'sendMessageTitle',
+            uploadFileTitle: 'uploadFileTitle',
         };
         const chatParticipantStatusDescriptor = (status: ChatParticipantStatus) => {
             const currentStatus = ChatParticipantStatus[status].toString().toLowerCase();

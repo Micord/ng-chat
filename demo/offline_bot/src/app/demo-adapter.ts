@@ -70,7 +70,7 @@ export class DemoAdapter extends ChatAdapter
         }));
     }
 
-    getMessageHistory(destinataryId: any): Observable<Message[]> {
+    getMessageHistory(): Observable<Message[]> {
         let mockedHistory: Array<Message>;
 
         mockedHistory = [
@@ -126,4 +126,12 @@ export class DemoAdapter extends ChatAdapter
             }
         }, 1000);
     }
+
+  deleteMessages(messages: Message[]): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  isSessionActive(): boolean {
+    return false;
+  }
 }

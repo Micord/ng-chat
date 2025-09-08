@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "baseUrl": "./",
+    "inlineSourceMap": true
+  },
+  "files": [
+    "src/test.ts",
+  ],
+  "include": [
+    "src/ts/**/*.ts",
+    "src/ts/**/*.d.ts"
+  ]
+}

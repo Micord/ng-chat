@@ -16,7 +16,7 @@ export class ChatWindow
 
     public participant: IChatParticipant;
     public messages: Message[] = [];
-    public newMessage?: string = "";
+    public newMessage: string = "";
 
     // UI Behavior properties
     public isCollapsed?: boolean = false;

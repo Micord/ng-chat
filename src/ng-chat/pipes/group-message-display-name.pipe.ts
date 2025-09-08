@@ -5,7 +5,10 @@ import { Message } from "../core/message";
 /*
  * Renders the display name of a participant in a group based on who's sent the message
 */
-@Pipe({name: 'groupMessageDisplayName'})
+@Pipe({
+    name: 'groupMessageDisplayName',
+    standalone: false
+})
 export class GroupMessageDisplayNamePipe implements PipeTransform {
     transform(participant: IChatParticipant, message: Message): string {
         return participant && message.fromName ? message.fromName : "";
