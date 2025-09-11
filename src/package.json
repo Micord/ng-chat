@@ -6,8 +6,7 @@
   "license": "MIT",
   "homepage": "https://github.com/Micord/ng-chat",
   "scripts": {
-    "copy-readme": "copy ..\\README.md dist\\README.md",
-    "build": "ng build && npm run copy-readme"
+    "build": "ng build"
   },
   "peerDependencies": {
     "rxjs": "*"
